@@ -1,0 +1,87 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts')).sort((a, b) => a.id.localeCompare(b.id));
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, prev: posts[i - 1] ?? null, next: posts[i + 1] ?? null },
+  }));
+}
+
+const { post, prev, next } = Astro.props;
+const { Content, headings } = await render(post);
+
+// 본문 최상단 H1 은 제목이므로 목차에서 뺀다
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}. ${String(d.getMonth() + 1).padStart(2, '0')}. ${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<Base title={post.data.title} description={post.data.description}>
+  <div class="post-layout">
+    <article>
+      <div class="meta">
+        <span class="badge">{post.data.category}</span>
+        <span>{fmt(post.data.date)}</span>
+      </div>
+
+      {
+        toc.length > 2 && (
+          <details class="toc toc-mobile">
+            <summary>목차</summary>
+            <ol>
+              {toc.map((h) => (
+                <li class={h.depth === 3 ? 'lv3' : 'lv2'}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )
+      }
+
+      <Content />
+
+      <nav class="post-nav">
+        {
+          prev ? (
+            <a href={`/posts/${prev.id}/`}>
+              <span class="dir">← 이전 글</span>
+              <span class="t">{prev.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+        {
+          next ? (
+            <a class="next" href={`/posts/${next.id}/`}>
+              <span class="dir">다음 글 →</span>
+              <span class="t">{next.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+      </nav>
+    </article>
+
+    {
+      toc.length > 2 && (
+        <aside class="toc toc-desktop">
+          <div class="toc-label">목차</div>
+          <ol>
+            {toc.map((h) => (
+              <li class={h.depth === 3 ? 'lv3' : 'lv2'}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ol>
+        </aside>
+      )
+    }
+  </div>
+</Base>

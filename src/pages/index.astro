@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('posts')).sort((a, b) => a.id.localeCompare(b.id));
+
+// 카테고리별로 묶어서 보여준다. 순서를 고정해 학습 흐름을 유지한다.
+const ORDER = ['아주이벤트', '메일상자', '아올다 클라우드', '공통', '회고'];
+const groups = ORDER.map((name) => ({
+  name,
+  posts: all.filter((p) => p.data.category === name),
+})).filter((g) => g.posts.length > 0);
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}. ${String(d.getMonth() + 1).padStart(2, '0')}. ${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<Base title="김휘래 · 백엔드 개발 기록">
+  <main class="wrap">
+    <section class="intro">
+      <h1>백엔드 개발 기록</h1>
+      <p>
+        아주이벤트, 메일상자, 아올다 클라우드를 만들면서 마주친 문제와 해결 과정을 적습니다.
+        글에 나오는 코드는 실제 저장소의 코드이고, 수치는 전부 직접 측정한 값입니다.
+      </p>
+    </section>
+
+    {
+      groups.map((g) => (
+        <>
+          <h2 class="group-title">{g.name}</h2>
+          <ul class="post-list">
+            {g.posts.map((post) => (
+              <li>
+                <div class="meta">
+                  <span>{fmt(post.data.date)}</span>
+                  {post.data.tags.slice(0, 3).map((t) => (
+                    <span>· {t}</span>
+                  ))}
+                </div>
+                <h2><a href={`/posts/${post.id}/`}>{post.data.title}</a></h2>
+                <p>{post.data.description}</p>
+              </li>
+            ))}
+          </ul>
+        </>
+      ))
+    }
+  </main>
+</Base>

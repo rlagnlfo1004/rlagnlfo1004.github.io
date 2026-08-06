@@ -1,0 +1,113 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'Java, Spring 백엔드 개발 기록' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>"
+    />
+
+    <!-- 저장된 테마를 그리기 전에 적용해서 깜빡임을 막는다 -->
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem('theme');
+          if (saved === 'dark' || saved === 'light') {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a class="site-title" href="/">김휘래 · 백엔드 개발 기록</a>
+        <nav class="site-nav">
+          <a href="/">글 목록</a>
+          <a href="https://github.com/rlagnlfo1004">GitHub</a>
+          <a href="https://rlagnlfo1004.tistory.com">Tistory</a>
+          <button
+            class="theme-btn"
+            id="theme-btn"
+            type="button"
+            aria-label="다크 모드와 라이트 모드 전환"
+            title="D 키로도 전환할 수 있어요"
+          >
+            <span id="theme-label">테마</span><kbd>D</kbd>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      측정하지 않은 것은 쓰지 않습니다. 모든 수치는 직접 실행한 결과입니다.
+    </footer>
+
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const btn = document.getElementById('theme-btn');
+        const label = document.getElementById('theme-label');
+
+        const systemDark = () =>
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        const current = () => root.dataset.theme || (systemDark() ? 'dark' : 'light');
+
+        const paint = () => {
+          if (label) label.textContent = current() === 'dark' ? '라이트' : '다크';
+        };
+
+        const toggle = () => {
+          const next = current() === 'dark' ? 'light' : 'dark';
+          root.dataset.theme = next;
+          try { localStorage.setItem('theme', next); } catch (e) {}
+          paint();
+        };
+
+        paint();
+        btn?.addEventListener('click', toggle);
+
+        // D 키로 전환. 입력 중이거나 조합키를 누른 경우는 무시한다.
+        document.addEventListener('keydown', (e) => {
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          if (e.key !== 'd' && e.key !== 'D' && e.key !== 'ㅇ') return;
+          const el = document.activeElement;
+          const tag = el && el.tagName;
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || (el && el.isContentEditable)) return;
+          e.preventDefault();
+          toggle();
+        });
+
+        // 수동 선택이 없을 때만 시스템 설정 변화를 따라간다
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+          if (!root.dataset.theme) paint();
+        });
+      })();
+    </script>
+  </body>
+</html>
