@@ -1,9 +1,9 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// 도메인을 연결하면 site 값을 그 주소로 바꾸면 됩니다.
+// 커스텀 도메인. public/CNAME 파일과 값이 같아야 한다.
 export default defineConfig({
-  site: 'https://rlagnlfo1004.github.io',
+  site: 'https://blog.looksgood2.me',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
