@@ -96,6 +96,13 @@ body {
   letter-spacing: -0.025em;
   margin: 0 0 0.75rem;
 }
+.intro .tagline {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+  margin: 0 0 1rem;
+}
 .intro p { color: var(--fg-muted); margin: 0; font-size: 0.97rem; }
 
 .group-title {
