@@ -34,7 +34,50 @@ MDC(Mapped Diagnostic Context)는 로그에 문맥 정보를 얹는 장치입니
 
 문제는 저장 위치입니다. MDC는 내부적으로 `ThreadLocal` 을 씁니다. **이름 그대로 스레드에 종속적**이에요.
 
-![MDC 는 ThreadLocal 이라 스레드 경계를 넘지 못한다](/diagrams/03-mdc-boundary.png)
+<svg class="diagram" viewBox="0 0 720 320" role="img" aria-label="MDC 는 ThreadLocal 이라 스레드 경계를 넘지 못한다">
+  <defs>
+    <marker id="d4-x" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+      <path d="M0,0.5 L7,4 L0,7.5" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1.2"/>
+    </marker>
+    <marker id="d4-c" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto">
+      <path d="M0,0.5 L7,4 L0,7.5" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1.2"/>
+    </marker>
+  </defs>
+  <!-- without -->
+  <text x="0" y="14" font-size="12.5" font-weight="700" fill="var(--ink-2, #63605A)">데코레이터 없음</text>
+  <rect x="0" y="28" width="300" height="84" rx="8" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="18" y="50" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">서블릿 스레드</text>
+  <rect x="18" y="60" width="150" height="38" rx="5" fill="var(--sunk, #F1EDE3)"/>
+  <text x="32" y="76" font-size="11" fill="var(--ink-3, #9A958B)">MDC</text>
+  <text x="32" y="92" font-size="11.5" fill="var(--ink, #221F1B)">traceId = abc123</text>
+  <rect x="420" y="28" width="300" height="84" rx="8" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="438" y="50" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">fcm-callback 스레드</text>
+  <rect x="438" y="60" width="150" height="38" rx="5" fill="var(--sunk, #F1EDE3)"/>
+  <text x="452" y="76" font-size="11" fill="var(--ink-3, #9A958B)">MDC</text>
+  <text x="452" y="92" font-size="11.5" fill="var(--clay, #BF5F3B)">비어 있음</text>
+  <text x="602" y="84" font-size="11.5" fill="var(--clay, #BF5F3B)">로그에 traceId 없음</text>
+  <path d="M300,70 L416,70" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#d4-x)"/>
+  <text x="358" y="62" font-size="10.5" fill="var(--ink-3, #9A958B)" text-anchor="middle">전달 안 됨</text>
+  <!-- with -->
+  <text x="0" y="160" font-size="12.5" font-weight="700" fill="var(--clay, #BF5F3B)">MdcTaskDecorator 적용</text>
+  <rect x="0" y="174" width="300" height="98" rx="8" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="18" y="196" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">서블릿 스레드</text>
+  <rect x="18" y="206" width="150" height="38" rx="5" fill="var(--sunk, #F1EDE3)"/>
+  <text x="32" y="222" font-size="11" fill="var(--ink-3, #9A958B)">MDC</text>
+  <text x="32" y="238" font-size="11.5" fill="var(--ink, #221F1B)">traceId = abc123</text>
+  <text x="180" y="224" font-size="11" fill="var(--ink-2, #63605A)">decorate() 에서</text>
+  <text x="180" y="240" font-size="11" fill="var(--ink-2, #63605A)">스냅샷을 뜬다</text>
+  <rect x="420" y="174" width="300" height="98" rx="8" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="438" y="196" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">fcm-callback 스레드</text>
+  <rect x="438" y="206" width="150" height="38" rx="5" fill="var(--sunk, #F1EDE3)"/>
+  <text x="452" y="222" font-size="11" fill="var(--ink-3, #9A958B)">MDC</text>
+  <text x="452" y="238" font-size="11.5" fill="var(--ink, #221F1B)">traceId = abc123</text>
+  <text x="602" y="216" font-size="11" fill="var(--ink-2, #63605A)">실행 전 : 무조건 덮어씀</text>
+  <text x="602" y="234" font-size="11" fill="var(--ink-2, #63605A)">실행 후 : clear()</text>
+  <path d="M300,220 L416,220" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1.2" marker-end="url(#d4-c)"/>
+  <line x1="0" y1="292" x2="720" y2="292" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="0" y="310" font-size="11.5" fill="var(--ink-3, #9A958B)">실측 · 작업 200건 · 데코레이터 없음 0/200 연결 (0%)  →  적용 후 200/200 연결 (100%)</text>
+</svg>
 
 콜백은 `fcmCallbackExecutor` 위에서 실행됩니다. 요청을 받은 서블릿 스레드와 다른 스레드예요. 스레드가 다르니 `ThreadLocal` 도 다르고, 따라서 MDC가 비어 있습니다.
 

@@ -1,0 +1,44 @@
+<svg class="diagram" viewBox="0 0 720 340" role="img" aria-label="중첩 순서에 따라 Circuit Breaker 가 세는 값이 달라진다">
+  <text x="0" y="14" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">요청 1건에서 CircuitBreaker 가 기록하는 값</text>
+
+  <!-- LEFT : CB outside -->
+  <text x="0" y="46" font-size="12.5" font-weight="700" fill="var(--clay, #BF5F3B)">CB 바깥, Retry 안쪽</text>
+  <text x="118" y="46" font-size="11.5" fill="var(--ink-3, #9A958B)">실제 코드</text>
+
+  <rect x="0" y="58" width="326" height="164" rx="8" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
+  <text x="16" y="79" font-size="11.5" font-weight="700" fill="var(--clay, #BF5F3B)">CircuitBreaker</text>
+
+  <rect x="16" y="88" width="294" height="120" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5" stroke-dasharray="4 3"/>
+  <text x="32" y="108" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">Retry</text>
+
+  <rect x="32" y="118" width="262" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="163" y="134" font-size="11.5" fill="var(--ink-2, #63605A)" text-anchor="middle">1회차 호출  ·  실패</text>
+  <rect x="32" y="146" width="262" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="163" y="162" font-size="11.5" fill="var(--ink-2, #63605A)" text-anchor="middle">2회차 호출  ·  실패</text>
+  <rect x="32" y="174" width="262" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="163" y="190" font-size="11.5" fill="var(--ink-2, #63605A)" text-anchor="middle">3회차 호출  ·  실패</text>
+
+  <text x="163" y="252" font-size="12" fill="var(--ink-3, #9A958B)" text-anchor="middle">CB 에 기록되는 값</text>
+  <text x="163" y="278" font-size="20" font-weight="700" fill="var(--clay, #BF5F3B)" text-anchor="middle">실패 1회</text>
+  <text x="163" y="300" font-size="11.5" fill="var(--ink-3, #9A958B)" text-anchor="middle">재시도해도 못 살린 비율을 센다</text>
+
+  <!-- RIGHT : Retry outside -->
+  <text x="394" y="46" font-size="12.5" font-weight="700" fill="var(--ink-2, #63605A)">Retry 바깥, CB 안쪽</text>
+
+  <rect x="394" y="58" width="326" height="164" rx="8" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="410" y="79" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">Retry</text>
+
+  <rect x="410" y="88" width="294" height="34" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="557" y="109" font-size="11.5" fill="var(--ink-2, #63605A)" text-anchor="middle">CB 통과 → 호출 실패</text>
+  <rect x="410" y="128" width="294" height="34" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="557" y="149" font-size="11.5" fill="var(--ink-2, #63605A)" text-anchor="middle">CB 통과 → 호출 실패</text>
+  <rect x="410" y="168" width="294" height="34" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="557" y="189" font-size="11.5" fill="var(--ink-2, #63605A)" text-anchor="middle">CB 통과 → 호출 실패</text>
+
+  <text x="557" y="252" font-size="12" fill="var(--ink-3, #9A958B)" text-anchor="middle">CB 에 기록되는 값</text>
+  <text x="557" y="278" font-size="20" font-weight="700" fill="var(--ink, #221F1B)" text-anchor="middle">실패 3회</text>
+  <text x="557" y="300" font-size="11.5" fill="var(--ink-3, #9A958B)" text-anchor="middle">개별 호출 실패율을 센다</text>
+
+  <line x1="0" y1="322" x2="720" y2="322" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="0" y="338" font-size="11.5" fill="var(--ink-3, #9A958B)">일시적 오류 50건 실험 · CB 바깥 50건 성공, CLOSED  /  Retry 바깥 18건 성공, OPEN</text>
+</svg>

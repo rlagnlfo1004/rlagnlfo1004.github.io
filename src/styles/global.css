@@ -401,3 +401,21 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   .post-title { font-size: 28px; }
   body { font-size: 17px; }
 }
+
+/* ── inline diagrams ────────────────────────────────────── */
+/* SVG 를 본문에 인라인으로 넣어 테마 토큰을 그대로 상속받게 한다.
+   PNG 와 달리 다크 모드에서 밝은 덩어리로 뜨지 않는다. */
+.prose .diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 32px 0;
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+.prose .diagram text { font-family: var(--font-sans); }
+.prose .diagram + .diagram-note {
+  margin-top: -18px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}

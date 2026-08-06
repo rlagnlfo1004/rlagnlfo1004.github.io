@@ -1,0 +1,30 @@
+<svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="DEL 은 읽은 뒤에 들어온 증가분까지 지운다">
+  <text x="0" y="14" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">flush 가 값을 읽고 DB 에 반영하는 사이에도 조회는 계속 들어온다</text>
+
+  <!-- shared timeline -->
+  <rect x="0" y="30" width="720" height="62" rx="8" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="18" y="52" font-size="12" fill="var(--ink-2, #63605A)">t0  flush 가 값을 읽는다 (100)</text>
+  <text x="250" y="52" font-size="12" fill="var(--ink-2, #63605A)">t1, t2  조회 2건 INCR → 값은 102</text>
+  <text x="18" y="76" font-size="12" fill="var(--ink-2, #63605A)">t3  읽은 값 100 을 DB 에 더한다</text>
+
+  <!-- DEL -->
+  <text x="0" y="122" font-size="12.5" font-weight="700" fill="var(--clay, #BF5F3B)">t4 에서 DEL</text>
+  <rect x="0" y="132" width="346" height="102" rx="8" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="18" y="156" font-size="12" fill="var(--ink, #221F1B)">키를 통째로 삭제한다</text>
+  <line x1="18" y1="170" x2="328" y2="170" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="18" y="192" font-size="12" fill="var(--ink-2, #63605A)">Redis 잔여  0        DB 반영  100</text>
+  <text x="18" y="220" font-size="13" font-weight="700" fill="var(--clay, #BF5F3B)">t1, t2 의 조회 2건이 사라진다</text>
+
+  <!-- DECRBY -->
+  <text x="374" y="122" font-size="12.5" font-weight="700" fill="var(--ink-2, #63605A)">t4 에서 DECRBY  ·  실제 코드</text>
+  <rect x="374" y="132" width="346" height="102" rx="8" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="392" y="156" font-size="12" fill="var(--ink, #221F1B)">읽은 값 100 만큼만 뺀다</text>
+  <line x1="392" y1="170" x2="702" y2="170" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="392" y="192" font-size="12" fill="var(--ink-2, #63605A)">Redis 잔여  2        DB 반영  100</text>
+  <text x="392" y="220" font-size="13" font-weight="700" fill="var(--ink, #221F1B)">남은 2 는 다음 주기에 반영된다</text>
+
+  <!-- measured -->
+  <line x1="0" y1="260" x2="720" y2="260" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="0" y="278" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">실측 · 조회 스레드 8개 · flush 20회 · 반영 지연 20ms</text>
+  <text x="0" y="296" font-size="11.5" fill="var(--ink-3, #9A958B)">DEL  조회 70,682건 중 11,910건 유실 (16.85%)        DECRBY  조회 71,833건 중 유실 0건</text>
+</svg>
