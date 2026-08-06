@@ -2,11 +2,9 @@
 title: "Circuit Breaker와 Retry, 어느 쪽을 바깥에 둘 것인가 (Resilience4j 중첩 순서)"
 description: "Resilience4j에서 CB와 Retry의 중첩 순서를 바꿔 실측했습니다. 재시도로 살아나는 오류 50건 중 32건이 차단기 때문에 실패했어요."
 date: 2026-08-06
-category: "아올다 클라우드"
+project: "아올다 클라우드"
 tags: ["Resilience4j", "CircuitBreaker", "Retry"]
 ---
-
-# Circuit Breaker와 Retry, 어느 쪽을 바깥에 둘 것인가 (Resilience4j 중첩 순서)
 
 ## [배경 - 두 줄짜리 코드에서 멈춰 선 이유]
 

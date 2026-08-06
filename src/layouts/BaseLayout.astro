@@ -1,0 +1,130 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  progress?: boolean;
+}
+const { title, description = "Java, Spring 백엔드 개발 기록", progress = false } = Astro.props;
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+
+    {/* 테마를 페인트 전에 확정해 깜빡임을 막습니다 */}
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem("theme");
+        const dark = saved ? saved === "dark"
+          : matchMedia("(prefers-color-scheme: dark)").matches;
+        if (dark) document.documentElement.dataset.theme = "dark";
+      })();
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#content">본문으로 건너뛰기</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-title" href="/">김휘래 · 백엔드 개발 기록</a>
+        <nav class="site-nav">
+          <a href="/">글 목록</a>
+          <a href="https://github.com/rlagnlfo1004" rel="me noopener">GitHub</a>
+          <a href="https://rlagnlfo1004.tistory.com" rel="noopener">Tistory</a>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="테마 전환">
+            테마 <kbd>D</kbd>
+          </button>
+        </nav>
+      </div>
+      {progress && <div class="read-progress"><i id="read-progress"></i></div>}
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      측정하지 않은 것은 쓰지 않습니다. 모든 수치는 직접 실행한 결과입니다.
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+      const setTheme = (t: string) => {
+        root.dataset.theme = t === "dark" ? "dark" : "";
+        localStorage.setItem("theme", t);
+      };
+      const toggle = () =>
+        setTheme(root.dataset.theme === "dark" ? "light" : "dark");
+
+      document.getElementById("theme-toggle")?.addEventListener("click", toggle);
+      document.addEventListener("keydown", (e) => {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const el = e.target as HTMLElement;
+        if (el?.closest("input, textarea, [contenteditable]")) return;
+        if (e.key === "d" || e.key === "D" || e.key === "ㅇ") toggle();
+      });
+
+      // 읽기 진행률
+      const bar = document.getElementById("read-progress");
+      if (bar) {
+        const update = () => {
+          const max = document.documentElement.scrollHeight - innerHeight;
+          bar.style.width = max > 0 ? `${Math.min(100, (scrollY / max) * 100)}%` : "0%";
+        };
+        addEventListener("scroll", update, { passive: true });
+        addEventListener("resize", update);
+        update();
+      }
+
+      // 코드 블록: 언어 라벨 + 복사 버튼 + 줄 번호
+      document.querySelectorAll<HTMLPreElement>("pre.astro-code").forEach((pre) => {
+        if (pre.closest(".code-block")) return;
+        const lang = pre.dataset.language ?? "code";
+        const file = pre.getAttribute("data-file");
+
+        const wrap = document.createElement("div");
+        wrap.className = "code-block";
+        pre.parentNode?.insertBefore(wrap, pre);
+
+        const bar = document.createElement("div");
+        bar.className = "code-block__bar";
+        bar.innerHTML =
+          `<span class="code-block__lang">${file ? `${lang} · ${file}` : lang}</span>`;
+
+        const copy = document.createElement("button");
+        copy.type = "button";
+        copy.className = "code-block__copy";
+        copy.textContent = "복사";
+        copy.addEventListener("click", async () => {
+          await navigator.clipboard.writeText(pre.innerText);
+          copy.textContent = "복사됨";
+          copy.dataset.copied = "";
+          setTimeout(() => {
+            copy.textContent = "복사";
+            delete copy.dataset.copied;
+          }, 1600);
+        });
+        bar.appendChild(copy);
+
+        wrap.append(bar, pre);
+        pre.setAttribute("data-lines", "");
+      });
+    </script>
+  </body>
+</html>

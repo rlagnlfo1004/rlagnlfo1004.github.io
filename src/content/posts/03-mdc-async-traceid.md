@@ -2,11 +2,9 @@
 title: "비동기로 바꾸자 로그가 끊겼습니다 (MDC와 TaskDecorator)"
 description: "비동기로 바꾸자 traceId가 200건 전부 끊겼습니다. 그리고 오염을 막는 장치가 제가 생각한 코드가 아니었어요."
 date: 2026-08-06
-category: "아주이벤트"
+project: "아주이벤트"
 tags: ["MDC", "비동기", "관측성"]
 ---
-
-# 비동기로 바꾸자 로그가 끊겼습니다 (MDC와 TaskDecorator)
 
 ## [배경 - 콜백 로그에 traceId가 없다]
 

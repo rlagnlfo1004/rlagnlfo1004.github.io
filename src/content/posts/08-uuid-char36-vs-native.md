@@ -2,11 +2,9 @@
 title: "PostgreSQL에서 UUID를 CHAR(36)으로 저장하고 있었습니다"
 description: "PostgreSQL에서 UUID를 CHAR(36)으로 저장하면 공간은 1.74배, 조인은 1.76배 손해입니다."
 date: 2026-08-06
-category: "메일상자"
+project: "메일상자"
 tags: ["PostgreSQL", "UUID", "인덱스"]
 ---
-
-# PostgreSQL에서 UUID를 CHAR(36)으로 저장하고 있었습니다
 
 ## [배경 - 스키마를 다시 읽다가]
 

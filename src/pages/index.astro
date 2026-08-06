@@ -1,51 +1,85 @@
 ---
-import Base from '../layouts/Base.astro';
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-const all = (await getCollection('posts')).sort((a, b) => a.id.localeCompare(b.id));
+const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
 
-// 카테고리별로 묶어서 보여준다. 순서를 고정해 학습 흐름을 유지한다.
-const ORDER = ['아주이벤트', '메일상자', '아올다 클라우드', '공통', '회고'];
-const groups = ORDER.map((name) => ({
-  name,
-  posts: all.filter((p) => p.data.category === name),
-})).filter((g) => g.posts.length > 0);
-
-const fmt = (d: Date) =>
-  `${d.getFullYear()}. ${String(d.getMonth() + 1).padStart(2, '0')}. ${String(d.getDate()).padStart(2, '0')}`;
+const order = ["아주이벤트", "메일상자", "아올다 클라우드", "공통", "회고"];
+const counts = new Map<string, number>();
+posts.forEach((p) => counts.set(p.data.project, (counts.get(p.data.project) ?? 0) + 1));
+const projects = order.filter((p) => counts.has(p));
 ---
-
-<Base title="김휘래 · 백엔드 개발 기록">
-  <main class="wrap">
-    <section class="intro">
-      <h1>백엔드 개발 기록</h1>
-      <p class="tagline">측정하지 않은 것은 쓰지 않습니다</p>
-      <p>
+<BaseLayout title="김휘래 · 백엔드 개발 기록">
+  <div class="shell" style="--measure: 800px">
+    <main id="content">
+      <h1 class="home-title">백엔드 개발 기록</h1>
+      <p class="home-lead">
         아주이벤트, 메일상자, 아올다 클라우드를 만들면서 마주친 문제와 해결 과정을 적습니다.
+      </p>
+      <p class="home-note">
         글에 나오는 코드는 실제 저장소의 코드이고, 수치는 전부 직접 측정한 값입니다.
       </p>
-    </section>
 
-    {
-      groups.map((g) => (
-        <>
-          <h2 class="group-title">{g.name}</h2>
-          <ul class="post-list">
-            {g.posts.map((post) => (
-              <li>
-                <div class="meta">
-                  <span>{fmt(post.data.date)}</span>
-                  {post.data.tags.slice(0, 3).map((t) => (
-                    <span>· {t}</span>
-                  ))}
-                </div>
-                <h2><a href={`/posts/${post.id}/`}>{post.data.title}</a></h2>
-                <p>{post.data.description}</p>
-              </li>
-            ))}
-          </ul>
-        </>
-      ))
-    }
-  </main>
-</Base>
+      <div class="filters" role="group" aria-label="프로젝트 필터">
+        <button type="button" data-filter="all" aria-pressed="true">전체 {posts.length}</button>
+        {projects.map((p) => (
+          <button type="button" data-filter={p} aria-pressed="false">{p} {counts.get(p)}</button>
+        ))}
+      </div>
+
+      <div class="post-list">
+        {posts.map((post) => (
+          <article
+            class:list={["post-row", !post.data.cover && "post-row--no-cover"]}
+            data-project={post.data.project}
+          >
+            <div>
+              <div class="post-row__meta">
+                <b>{post.data.project}</b>
+                <span>·</span>
+                <time class="tnum" datetime={post.data.date.toISOString()}>
+                  {post.data.date.toLocaleDateString("ko-KR", {
+                    year: "numeric", month: "2-digit", day: "2-digit",
+                  })}
+                </time>
+              </div>
+              <h2><a href={`/posts/${post.id}/`}>{post.data.title}</a></h2>
+              <p>{post.data.description}</p>
+              <div class="tags">
+                {post.data.tags.map((t) => <span>{t}</span>)}
+              </div>
+            </div>
+            {post.data.cover && (
+              <Image
+                class="post-row__cover"
+                src={post.data.cover}
+                alt={post.data.coverAlt ?? ""}
+                width={400}
+                height={264}
+                loading="lazy"
+              />
+            )}
+          </article>
+        ))}
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-filter]")];
+  const rows = [...document.querySelectorAll<HTMLElement>(".post-row")];
+
+  buttons.forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.filter!;
+      buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      rows.forEach((row) => {
+        row.hidden = key !== "all" && row.dataset.project !== key;
+      });
+    })
+  );
+</script>

@@ -2,11 +2,9 @@
 title: "Redis 조회수를 DB로 옮길 때 증가분이 사라지는 문제 (Lua 델타 차감)"
 description: "Redis 조회수를 DB로 옮길 때 DEL을 쓰면 16.85%가 유실됐습니다. 읽은 만큼만 DECRBY 하면 0건이 됩니다."
 date: 2026-08-06
-category: "아주이벤트"
+project: "아주이벤트"
 tags: ["Redis", "Lua", "동시성"]
 ---
-
-# Redis 조회수를 DB로 옮길 때 증가분이 사라지는 문제 (Lua 델타 차감)
 
 ## [배경 - 조회수가 조금씩 비는 것 같다]
 

@@ -2,11 +2,9 @@
 title: "@Transactional 안에서 외부 API를 호출하면 안 되는 이유 (커넥션 풀 실측)"
 description: "트랜잭션 안에서 외부 API를 부르면 6.5배 느려지고, 부하가 조금 오르면 35%가 실패합니다."
 date: 2026-08-06
-category: "공통"
+project: "공통"
 tags: ["Spring", "트랜잭션", "HikariCP"]
 ---
-
-# @Transactional 안에서 외부 API를 호출하면 안 되는 이유 (커넥션 풀 실측)
 
 ## [배경 - 왜 안 된다고들 하는가]
 

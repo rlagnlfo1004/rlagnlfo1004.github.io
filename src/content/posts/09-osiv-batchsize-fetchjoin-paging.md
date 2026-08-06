@@ -2,11 +2,9 @@
 title: "공지 목록 조회를 고치다가 네 번 갈아엎었습니다 (OSIV, BatchSize, Fetch Join, 페이지네이션)"
 description: "OSIV를 끄자 예외가 터졌고, BatchSize와 Fetch Join을 거쳐 DTO 프로젝션까지 갔습니다. 쿼리 수는 유일한 지표가 아니었어요."
 date: 2026-08-06
-category: "아주이벤트"
+project: "아주이벤트"
 tags: ["JPA", "Hibernate", "N+1"]
 ---
-
-# 공지 목록 조회를 고치다가 네 번 갈아엎었습니다 (OSIV, BatchSize, Fetch Join, 페이지네이션)
 
 ## [배경 - 목록 하나 부르는데 쿼리가 스물한 개]
 

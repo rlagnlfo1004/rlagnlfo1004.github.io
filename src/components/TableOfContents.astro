@@ -1,0 +1,50 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+// h2·h3만 쓰고, 마크다운에서 넘어온 대괄호를 걷어냅니다.
+const items = Astro.props.headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({
+    ...h,
+    text: h.text.replace(/^\s*\[(.+)\]\s*$/, "$1").trim(),
+  }));
+---
+{items.length > 0 && (
+  <nav class="toc" aria-label="목차">
+    <span class="toc__label">목차</span>
+    {items.map((h) => (
+      <a href={`#${h.slug}`} data-depth={h.depth} data-toc-link>{h.text}</a>
+    ))}
+  </nav>
+)}
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")];
+  if (links.length) {
+    const targets = links
+      .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+      .filter((el): el is HTMLElement => !!el);
+
+    const mark = (id: string) =>
+      links.forEach((a) =>
+        a.toggleAttribute("aria-current", decodeURIComponent(a.hash.slice(1)) === id)
+      );
+
+    const seen = new Set<string>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) =>
+          e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id)
+        );
+        const first = targets.find((t) => seen.has(t.id));
+        if (first) mark(first.id);
+      },
+      { rootMargin: "-88px 0px -70% 0px", threshold: 0 }
+    );
+    targets.forEach((t) => io.observe(t));
+  }
+</script>

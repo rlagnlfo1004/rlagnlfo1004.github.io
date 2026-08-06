@@ -2,11 +2,9 @@
 title: "아직 없는 행은 잠글 수 없습니다 (Lock 전용 테이블과 Unique 제약)"
 description: "SELECT FOR UPDATE로는 신규 INSERT 경쟁을 막지 못합니다. 30번 시도에서 30번 모두 중복이 생겼어요."
 date: 2026-08-06
-category: "메일상자"
+project: "메일상자"
 tags: ["PostgreSQL", "동시성", "JPA"]
 ---
-
-# 아직 없는 행은 잠글 수 없습니다 (Lock 전용 테이블과 Unique 제약)
 
 ## [배경 - 같은 메일 스레드가 두 번 생겼다]
 
