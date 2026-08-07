@@ -286,12 +286,24 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .astro-code { counter-reset: ln; }
 .astro-code .line:last-child:empty { display: none; }
 
+/* shikiConfig 의 defaultColor:false 는 색을 직접 넣지 않고
+   --shiki-light / --shiki-dark 변수만 내보낸다.
+   그래서 두 테마 모두 여기서 변수를 꺼내 써야 한다. 라이트 규칙이
+   빠져 있으면 라이트 모드에서 하이라이팅이 통째로 사라진다. */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+
 :root[data-theme="dark"] .astro-code,
 :root[data-theme="dark"] .astro-code span {
-  color: var(--shiki-dark) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
 }
 
 /* ── table of contents ──────────────────────────────────── */
@@ -371,7 +383,11 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   display: grid; grid-template-columns: 1fr 200px; gap: 28px; align-items: start;
   padding: 26px 0; border-bottom: 0.5px solid var(--rule-soft);
 }
-.post-row:last-child { border-bottom: 0; }
+/* display 를 직접 지정했으므로 브라우저 기본 [hidden] 규칙이 밀린다.
+   필터가 row.hidden 을 켜도 안 사라지던 원인. */
+.post-row[hidden] { display: none; }
+.post-row:last-child,
+.post-row.is-last { border-bottom: 0; }
 .post-row--no-cover { grid-template-columns: 1fr; }
 .post-row__meta {
   display: flex; align-items: center; gap: 8px;
@@ -419,3 +435,16 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   font-size: 13.5px;
   color: var(--ink-3);
 }
+
+/* 시퀀스 다이어그램처럼 가로로 긴 그림은 좁은 화면에서 통째로 줄이면 글자가 읽히지
+   않는다. 래퍼로 감싸 원래 폭을 유지한 채 그림만 가로 스크롤시킨다. */
+.prose .diagram-scroll {
+  margin: 32px 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.prose .diagram-scroll > .diagram {
+  margin: 0;
+  min-width: var(--diagram-min-w, 640px);
+}
+.prose .diagram-scroll + .diagram-note { margin-top: 10px; }
