@@ -93,6 +93,84 @@ System.out.println("리프 이름 = " + nested.getMetadata().getName());
 
 이름으로 찾는 것은 `fields` 와 같지만 setter 를 호출합니다. setter 가 없으면 값이 안 들어가요. 저장소에서 60곳 쓰이고 있는데 `fields` 와 섞여 있어서 구분 기준은 찾지 못했습니다.
 
+두 방식이 값을 넣는 경로를 그림으로 두면 이렇습니다.
+
+<div class="diagram-scroll" style="--diagram-min-w: 680px">
+<svg class="diagram" viewBox="0 0 720 340" role="img" aria-label="fields 는 이름으로, constructor 는 위치로 DTO 에 값을 넣는다">
+  <defs>
+    <marker id="p18-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 1 L7 4 L0 7 z" fill="var(--ink-3, #9A958B)"/>
+    </marker>
+    <marker id="p18-arrow-clay" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 1 L7 4 L0 7 z" fill="var(--clay, #BF5F3B)"/>
+    </marker>
+  </defs>
+
+  <text x="0" y="14" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">select 표현식이 DTO 로 들어가는 기준</text>
+
+  <!-- LEFT : fields -->
+  <text x="0" y="44" font-size="12.5" font-weight="700" fill="var(--clay, #BF5F3B)">Projections.fields  ·  이름으로 연결</text>
+  <text x="196" y="44" font-size="11.5" fill="var(--ink-3, #9A958B)">실제 코드</text>
+  <rect x="0" y="56" width="346" height="156" rx="8" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
+  <text x="16" y="76" font-size="11.5" fill="var(--ink-3, #9A958B)">select 표현식</text>
+  <text x="212" y="76" font-size="11.5" fill="var(--ink-3, #9A958B)">DTO 필드</text>
+
+  <rect x="16" y="86" width="118" height="24" rx="4" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="28" y="102" font-size="11.5" fill="var(--ink-2, #63605A)">mbId</text>
+  <rect x="16" y="116" width="118" height="24" rx="4" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="28" y="132" font-size="11.5" fill="var(--ink-2, #63605A)">mbName</text>
+  <rect x="16" y="146" width="118" height="24" rx="4" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="28" y="162" font-size="11.5" fill="var(--ink-2, #63605A)">adShortSi</text>
+
+  <rect x="212" y="86" width="118" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="224" y="102" font-size="11.5" fill="var(--ink, #221F1B)">adShortSi</text>
+  <rect x="212" y="116" width="118" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="224" y="132" font-size="11.5" fill="var(--ink, #221F1B)">mbId</text>
+  <rect x="212" y="146" width="118" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="224" y="162" font-size="11.5" fill="var(--ink, #221F1B)">mbName</text>
+
+  <path d="M134 98 L206 128" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p18-arrow)"/>
+  <path d="M134 128 L206 158" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p18-arrow)"/>
+  <path d="M134 158 L206 98" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p18-arrow)"/>
+
+  <text x="0" y="236" font-size="11.5" fill="var(--ink-3, #9A958B)">결과</text>
+  <text x="0" y="258" font-size="13" font-weight="700" fill="var(--ink, #221F1B)">순서가 달라도 이름으로 찾아 정상</text>
+  <text x="0" y="280" font-size="11.5" fill="var(--clay, #BF5F3B)">이름이 틀리면 예외 없이 그 필드만 null</text>
+
+  <!-- RIGHT : constructor -->
+  <text x="374" y="44" font-size="12.5" font-weight="700" fill="var(--ink-2, #63605A)">Projections.constructor  ·  위치로 연결</text>
+  <rect x="374" y="56" width="346" height="156" rx="8" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="390" y="76" font-size="11.5" fill="var(--ink-3, #9A958B)">select 표현식</text>
+  <text x="586" y="76" font-size="11.5" fill="var(--ink-3, #9A958B)">생성자 파라미터</text>
+
+  <rect x="390" y="86" width="118" height="24" rx="4" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="402" y="102" font-size="11.5" fill="var(--ink-2, #63605A)">mbName</text>
+  <rect x="390" y="116" width="118" height="24" rx="4" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="402" y="132" font-size="11.5" fill="var(--ink-2, #63605A)">mbId</text>
+  <rect x="390" y="146" width="118" height="24" rx="4" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="402" y="162" font-size="11.5" fill="var(--ink-2, #63605A)">adShortSi</text>
+
+  <rect x="586" y="86" width="118" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="598" y="102" font-size="11.5" fill="var(--ink, #221F1B)">1번째  mbId</text>
+  <rect x="586" y="116" width="118" height="24" rx="4" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
+  <text x="598" y="132" font-size="11.5" fill="var(--ink, #221F1B)">2번째  mbName</text>
+  <rect x="586" y="146" width="118" height="24" rx="4" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="0.8" stroke-dasharray="3 3"/>
+  <text x="598" y="162" font-size="11.5" fill="var(--clay, #BF5F3B)">3번째  없음</text>
+
+  <path d="M508 98 L580 98" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p18-arrow)"/>
+  <path d="M508 128 L580 128" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p18-arrow)"/>
+  <path d="M508 158 L580 158" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="0.9" stroke-dasharray="3 3" marker-end="url(#p18-arrow-clay)"/>
+
+  <text x="374" y="236" font-size="11.5" fill="var(--ink-3, #9A958B)">결과</text>
+  <text x="374" y="258" font-size="13" font-weight="700" fill="var(--clay, #BF5F3B)">mbId=김휘래   mbName=hwirae</text>
+  <text x="374" y="280" font-size="11.5" fill="var(--ink-3, #9A958B)">같은 타입이면 조용히 교환, 인자가 남으면 ExpressionException</text>
+
+  <line x1="0" y1="306" x2="720" y2="306" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
+  <text x="0" y="324" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">실측  ·  QueryDSL 5.1.0  ·  JDK 17  ·  QBean 과 ConstructorExpression 을 직접 만들어 newInstance 호출</text>
+</svg>
+</div>
+<p class="diagram-note">왼쪽은 화살표가 엇갈려도 값이 제자리를 찾습니다. 오른쪽은 화살표가 곧게 가기 때문에 표현식 순서가 그대로 결과가 됩니다.</p>
+
 ## [실측 - 필드가 늘거나 순서가 바뀌면 어떻게 되는가]
 
 세 방식이 "DTO가 변했는데 쿼리를 안 고친" 상황에서 각각 어떻게 반응하는지 직접 돌려봤습니다. QueryDSL 5.1.0, JDK 17 이고, `QBean` 과 `ConstructorExpression` 을 직접 만들어 `newInstance` 를 호출했어요.

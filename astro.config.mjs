@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import remarkReadingTime from './src/plugins/remark-reading-time.mjs';
+import rehypeTableScroll from './src/plugins/rehype-table-scroll.mjs';
 
 // 커스텀 도메인. public/CNAME 파일과 값이 같아야 한다.
 export default defineConfig({
@@ -8,6 +9,7 @@ export default defineConfig({
   integrations: [sitemap()],
   markdown: {
     remarkPlugins: [remarkReadingTime],
+    rehypePlugins: [rehypeTableScroll],
     shikiConfig: {
       // 따뜻한 계열 테마. 배경은 global.css 에서 --code-bg 로 덮어쓴다.
       themes: { light: 'vitesse-light', dark: 'vitesse-dark' },

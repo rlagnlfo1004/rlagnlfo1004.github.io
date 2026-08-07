@@ -238,9 +238,20 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .prose tbody tr:last-child td { font-weight: 700; color: var(--ink); }
 .prose .table-note { margin-top: -16px; font-size: 13.5px; color: var(--ink-3); }
 
-@media (max-width: 720px) {
-  .prose table { display: block; overflow-x: auto; }
+/* 셀에 nowrap 이 걸려 있어서 열이 많아지면 표가 본문 폭을 넘는다. 넘친 부분이 오른쪽
+   목차 위로 겹치지 않도록 표마다 스크롤 컨테이너를 씌운다. 래퍼는 rehype 플러그인이
+   붙이고, 좁은 표는 min-width 로 예전처럼 폭을 채운다. */
+.prose .table-scroll {
+  margin: 28px 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
 }
+.prose .table-scroll > table {
+  margin: 0;
+  width: max-content;
+  min-width: 100%;
+}
+.prose .table-scroll + .table-note { margin-top: 10px; }
 
 /* ── code blocks ────────────────────────────────────────── */
 .code-block {
