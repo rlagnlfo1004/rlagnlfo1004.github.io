@@ -7,7 +7,7 @@ const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-const order = ["케이톡", "아주이벤트", "메일상자", "아올다 클라우드", "공통", "회고"];
+const order = ["케이톡", "레인보우TV", "아주이벤트", "메일상자", "아올다 클라우드", "공통", "회고"];
 const counts = new Map<string, number>();
 posts.forEach((p) => counts.set(p.data.project, (counts.get(p.data.project) ?? 0) + 1));
 const projects = order.filter((p) => counts.has(p));
@@ -17,7 +17,7 @@ const projects = order.filter((p) => counts.has(p));
     <main id="content">
       <h1 class="home-title">백엔드 개발 기록</h1>
       <p class="home-lead">
-        케이톡, 아주이벤트, 메일상자, 아올다 클라우드를 만들면서 마주친 문제와 해결 과정을 적습니다.
+        케이톡, 레인보우TV, 아주이벤트, 메일상자, 아올다 클라우드를 만들면서 마주친 문제와 해결 과정을 적습니다.
       </p>
       <p class="home-note">
         글에 나오는 코드는 실제 저장소의 코드이고, 수치는 전부 직접 측정한 값입니다.
