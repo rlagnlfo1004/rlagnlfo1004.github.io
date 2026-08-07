@@ -6,7 +6,11 @@ interface Props {
   description?: string;
   progress?: boolean;
 }
-const { title, description = "Java, Spring 백엔드 개발 기록", progress = false } = Astro.props;
+const {
+  title,
+  description = "문제를 정의하고 서비스로 증명해온 기록. 정답이 하나가 아닌 자리에서 고른 이유와 버린 이유를 직접 잰 숫자와 함께 적습니다.",
+  progress = false,
+} = Astro.props;
 ---
 <!doctype html>
 <html lang="ko">
@@ -44,7 +48,7 @@ const { title, description = "Java, Spring 백엔드 개발 기록", progress = 
 
     <header class="site-header">
       <div class="site-header__inner">
-        <a class="site-title" href="/">김휘래 · 백엔드 개발 기록</a>
+        <a class="site-title" href="/">김휘래</a>
         <nav class="site-nav">
           <a href="/">글 목록</a>
           <a href="https://github.com/rlagnlfo1004" rel="me noopener">GitHub</a>
@@ -60,7 +64,7 @@ const { title, description = "Java, Spring 백엔드 개발 기록", progress = 
     <slot />
 
     <footer class="site-footer">
-      측정하지 않은 것은 쓰지 않습니다. 모든 수치는 직접 실행한 결과입니다.
+      측정하지 않은 것은 쓰지 않습니다. 코드는 실제 저장소에서 가져옵니다.
     </footer>
 
     <script>

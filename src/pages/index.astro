@@ -12,15 +12,17 @@ const counts = new Map<string, number>();
 posts.forEach((p) => counts.set(p.data.project, (counts.get(p.data.project) ?? 0) + 1));
 const projects = order.filter((p) => counts.has(p));
 ---
-<BaseLayout title="김휘래 · 백엔드 개발 기록">
+<BaseLayout title="김휘래 개발 기록">
   <div class="shell" style="--measure: 800px">
     <main id="content">
-      <h1 class="home-title">백엔드 개발 기록</h1>
+      <h1 class="home-title">문제를 정의하고 서비스로 증명해왔습니다</h1>
       <p class="home-lead">
-        케이톡, 레인보우TV, 아주이벤트, 메일상자, 아올다 클라우드를 만들면서 마주친 문제와 해결 과정을 적습니다.
+        불편을 그냥 넘기지 않고 해결할 문제로 정의한 뒤 직접 만들어 운영했습니다.
+        교내 공지를 조건에 맞게 밀어주는 아주이벤트는 가입자 466명에 MAU 300명,
+        여러 계정의 메일을 한곳에서 보는 메일상자는 가입자 322명이 쓰고 있어요.
       </p>
       <p class="home-note">
-        글에 나오는 코드는 실제 저장소의 코드이고, 수치는 전부 직접 측정한 값입니다.
+        정답이 하나가 아닌 자리에서 무엇을 고르고 무엇을 버렸는지, 그 근거를 직접 잰 숫자와 함께 적습니다.
       </p>
 
       <div class="filters" role="group" aria-label="프로젝트 필터">
