@@ -15,21 +15,12 @@ const featured = posts.filter((p) => p.data.featured).slice(0, 3);
 const featuredIds = new Set(featured.map((p) => p.id));
 const rest = posts.filter((p) => !featuredIds.has(p.id));
 
-const latest = posts[0]?.data.date;
 const fmt = (d: Date) =>
   d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
-
-// 밴드에 올리는 숫자는 전부 해당 글에서 이미 측정해 공개한 값입니다.
-const band = [
-  { value: "16.85% → 0", note: "DEL 대신 델타 차감으로 바꾼 뒤 조회수 유실", slug: "02-redis-lua-delta-flush" },
-  { value: "30 / 30", note: "SELECT FOR UPDATE 로 막지 못한 INSERT 경쟁", slug: "04-lock-table-insert-race" },
-  { value: "6.5배", note: "트랜잭션 안에서 외부 API 를 부를 때 응답 시간", slug: "10-transactional-external-call" },
-  { value: "466명", note: "실제 사용자를 받아 본 서비스의 가입자 수", slug: "06-retro-real-users" },
-];
 ---
 <BaseLayout title="김휘래 개발 기록">
   <section class="hero">
-    <div class="hero__inner">
+    <div class="hero__inner hero__inner--single">
       <div>
         <p class="eyebrow">MEASURED, NOT ASSUMED</p>
         <h1 class="home-title">문제를 정의하고 서비스로 증명해왔습니다</h1>
@@ -42,24 +33,6 @@ const band = [
           정답이 하나가 아닌 자리에서 무엇을 고르고 무엇을 버렸는지, 그 근거를 직접 잰 숫자와 함께 적습니다.
         </p>
       </div>
-
-      <dl class="hero__stats">
-        <div><dt>글</dt><dd class="tnum">{posts.length}</dd></div>
-        <div><dt>프로젝트</dt><dd class="tnum">{projects.length}</dd></div>
-        <div><dt>실측 데이터</dt><dd>전건</dd></div>
-        {latest && <div><dt>최근</dt><dd class="tnum">{fmt(latest)}</dd></div>}
-      </dl>
-    </div>
-  </section>
-
-  <section class="band" aria-label="글에서 측정한 값">
-    <div class="band__inner">
-      {band.map((b) => (
-        <a class="band__item" href={`/posts/${b.slug}/`}>
-          <b class="tnum">{b.value}</b>
-          <span>{b.note}</span>
-        </a>
-      ))}
     </div>
   </section>
 

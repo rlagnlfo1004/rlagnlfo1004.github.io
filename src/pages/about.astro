@@ -1,9 +1,17 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import profile from "../assets/profile.jpg";
+import ajouEventLogo from "../assets/logos/ajouevent.png";
+import mailsangjaLogo from "../assets/logos/mailsangja.png";
+import aoldaLogo from "../assets/logos/aolda.svg";
+import hamalabLogo from "../assets/logos/hamalab.png";
+import ajouLogo from "../assets/logos/ajou.png";
 
 // 내용은 resume 저장소의 이력서 원문에서 가져왔습니다.
 const services = [
   {
+    logo: ajouEventLogo,
     name: "아주이벤트",
     role: "학교 공지사항 알림 서비스",
     period: "2025.06 ~ 운영 중",
@@ -23,6 +31,7 @@ const services = [
     ],
   },
   {
+    logo: mailsangjaLogo,
     name: "메일상자",
     role: "AI 기반 다중 계정 메일 인박스 자동화",
     period: "2026.03 ~ 진행 중",
@@ -41,6 +50,7 @@ const services = [
     ],
   },
   {
+    logo: aoldaLogo,
     name: "아올다 클라우드",
     role: "OpenStack 기반 클라우드 콘솔",
     period: "2025.05 ~ 진행 중",
@@ -58,7 +68,7 @@ const services = [
 ];
 
 const activities = [
-  { name: "HAMALAB 서버 개발 인턴십", period: "2026.06 ~ ing", now: true },
+  { name: "HAMALAB 서버 개발 인턴십", period: "2026.06 ~ ing", now: true, logo: hamalabLogo },
   { name: "아주대학교 코딩트레이너, 객체지향프로그래밍 및 실습", period: "2026.03 ~ 2026.06" },
   { name: "소프트웨어학과 학술 동아리 한터 37기 회장", period: "2025.01 ~ 2025.12" },
   { name: "프라이빗 클라우드 아올다 1기 개발팀", period: "2025.03 ~ ing" },
@@ -81,7 +91,7 @@ const stack = [
   description="정답이 없는 자리에서 트레이드오프를 따져 결정하고, 그 결정을 실제 사용자에게 검증해왔습니다."
 >
   <section class="hero">
-    <div class="hero__inner hero__inner--single">
+    <div class="hero__inner hero__inner--profile">
       <div>
         <p class="eyebrow">DEFINE, BUILD, MEASURE</p>
         <h1 class="home-title">김휘래</h1>
@@ -99,6 +109,8 @@ const stack = [
           <a href="mailto:hramst0618@gmail.com">이메일</a>
         </div>
       </div>
+
+      <Image class="profile" src={profile} alt="김휘래" width={260} height={338} loading="eager" />
     </div>
   </section>
 
@@ -110,6 +122,7 @@ const stack = [
         {services.map((s) => (
           <article class="work">
             <div class="work__head">
+              <span class="logo"><img src={s.logo.src} alt="" width="26" height="26" loading="lazy" /></span>
               <h3>
                 <a href={s.href} rel="noopener">{s.name}</a>
                 <span>{s.role}</span>
@@ -143,7 +156,10 @@ const stack = [
         <ul class="timeline">
           {activities.map((a) => (
             <li class:list={["timeline__item", a.now && "is-now"]}>
-              <span>{a.name}</span>
+              <span class="timeline__name">
+                {a.logo && <span class="logo logo--sm"><img src={a.logo.src} alt="" width="22" height="22" loading="lazy" /></span>}
+                {a.name}
+              </span>
               <span class="tnum">{a.period}</span>
             </li>
           ))}
@@ -167,7 +183,10 @@ const stack = [
         <h2>교육</h2>
         <div>
           <div class="edu__head">
-            <b>아주대학교 소프트웨어학과</b>
+            <b>
+              <span class="logo logo--sm"><img src={ajouLogo.src} alt="" width="22" height="22" loading="lazy" /></span>
+              아주대학교 소프트웨어학과
+            </b>
             <span class="tnum">2021.03 ~ 2027.02 졸업 예정</span>
           </div>
           <dl class="work__stats">
