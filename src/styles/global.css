@@ -139,6 +139,8 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   .shell > .toc { display: none; }
 }
 
+.hero + .shell { padding-top: 28px; }
+
 /* ── post meta + title ──────────────────────────────────── */
 .post-meta {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -371,7 +373,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   font-size: 19px; line-height: 1.75; letter-spacing: 0;
   color: var(--ink-2); text-wrap: pretty;
 }
-.home-note { margin: 0 0 36px; font-size: 15px; line-height: 1.7; color: var(--ink-3); }
+.home-note { margin: 0; font-size: 15px; line-height: 1.7; color: var(--ink-3); }
 
 .filters {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -429,11 +431,11 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   background: radial-gradient(680px 300px at 8% 0%, var(--clay-soft), transparent 70%);
 }
 .hero__inner {
-  max-width: 1180px; margin: 0 auto; padding: 68px 28px 52px;
-  display: grid; grid-template-columns: 1fr 240px; gap: 56px; align-items: end;
+  max-width: 1180px; margin: 0 auto; padding: 52px 28px 40px;
+  display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: end;
 }
 .hero__inner--single { grid-template-columns: 1fr; }
-.hero__inner--profile { grid-template-columns: 1fr 200px; align-items: center; }
+.hero__inner--profile { grid-template-columns: 200px 1fr; align-items: center; gap: 36px; }
 .profile {
   width: 200px; height: auto; border-radius: 10px;
   border: 0.5px solid var(--rule); background: var(--surface);
@@ -455,7 +457,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .logo--sm { width: auto; min-width: 26px; height: 26px; padding: 0 5px; border-radius: 6px; }
 .logo--sm img { width: auto; max-width: 60px; height: 16px; }
 
-.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 .links a {
   display: inline-flex; align-items: center; height: 34px; padding: 0 16px;
   font-size: 13.5px; color: var(--ink-2);
@@ -465,8 +467,8 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .links a:hover { color: var(--ink); text-decoration: none; }
 
 /* ── 섹션 머리 ──────────────────────────────────────────── */
-.section { margin-top: 52px; }
-.section:first-of-type { margin-top: 44px; }
+.section { margin-top: 48px; }
+.section:first-of-type { margin-top: 0; }
 .section__head {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 16px; margin-bottom: 20px;
@@ -536,7 +538,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   font-size: 13px; font-weight: 500; color: var(--ink-3); letter-spacing: 0.06em;
 }
 
-.row { display: grid; grid-template-columns: 120px 1fr; gap: 24px; margin-top: 40px; }
+.row { display: grid; grid-template-columns: 120px 1fr; gap: 24px; margin-top: 36px; }
 .row h2 {
   margin: 0; padding-top: 4px; font-family: var(--font-mono);
   font-size: 12px; font-weight: 500; letter-spacing: 0.08em; color: var(--ink-3);

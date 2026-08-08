@@ -12,16 +12,21 @@ import ajouLogo from "../assets/logos/ajou.png";
 const career = {
   logo: hamalabLogo,
   name: "HAMALAB",
-  role: "서버 개발 인턴",
+  role: "백엔드 인턴",
   period: "2026.06 ~ 재직 중",
   href: "https://hamalab.io",
   summary:
-    "레인보우TV 관리자 API 를 맡고 있습니다. Java 17 과 Spring Boot 3.5, QueryDSL 기반이고 파일 4,463개에 35만 줄 규모입니다.",
+    "코리안쌤과 케이톡이 함께 쓰는 공통 회원, 인증인가, 재화 서비스를 개발하고 전반적인 MSA 구조 설계를 맡고 있습니다. 코리안쌤 서비스 전반 개발도 같이 합니다.",
   wins: [
-    "관리자 화면 전반의 목록 응답 47개에 회원 식별 필드를 일괄 추가했습니다. 조회가 전부 DTO 프로젝션으로 되어 있어 조회 계층 변경은 115줄에서 끝났고, 남은 비용은 손으로 쓴 엑셀 매핑 쪽이었습니다.",
-    "필드를 붙이려고 조인을 넣을 때 inner join 을 쓰면 값이 없는 회원이 목록에서 사라지는 문제를 하나씩 확인하며 left join 으로 맞췄습니다.",
+    "두 서비스가 회원과 재화를 공유해야 해서 공통 서버를 뒀습니다. 다만 서비스를 쪼개는 MSA 가 아니라 소유권을 한곳에 모으는 쪽으로 잡았고, 그 경계를 어디에 그었는지 정리했습니다.",
+    "인앱결제는 앱과 스토어 웹훅이 같은 건을 거의 동시에 밀어넣습니다. 멱등키부터 원장 Unique 제약까지 네 겹으로 나눠 중복 지급을 끊었습니다.",
+    "포인트는 잔액 하나로 두지 않고 append-only 원장과 lot 명세로 나눴습니다. 무상과 유상, 만료일이 섞이면 어느 몫을 먼저 깎을지가 정책이 되기 때문입니다.",
   ],
-  post: { slug: "18-querydsl-projections-fields", title: "QueryDSL Projections.fields 로 목록 API 47개에 필드 넣기" },
+  posts: [
+    { slug: "13-common-platform-not-msa", title: "공통 플랫폼은 MSA 가 아니다" },
+    { slug: "11-payment-idempotency-four-layers", title: "결제 멱등성 네 겹" },
+    { slug: "15-point-transaction-ledger-design", title: "재화 도메인의 원장 설계" },
+  ],
 };
 
 // 아래 내용은 resume 저장소의 이력서 원문에서 가져왔습니다.
@@ -107,6 +112,8 @@ const stack = [
 >
   <section class="hero">
     <div class="hero__inner hero__inner--profile">
+      <Image class="profile" src={profile} alt="김휘래" width={260} height={338} loading="eager" />
+
       <div>
         <p class="eyebrow">DEFINE, BUILD, MEASURE</p>
         <h1 class="home-title">김휘래</h1>
@@ -124,8 +131,6 @@ const stack = [
           <a href="mailto:hramst0618@gmail.com">이메일</a>
         </div>
       </div>
-
-      <Image class="profile" src={profile} alt="김휘래" width={260} height={338} loading="eager" />
     </div>
   </section>
 
@@ -148,7 +153,11 @@ const stack = [
             {career.wins.map((w) => <li>{w}</li>)}
           </ul>
           <p class="work__link">
-            여기서 한 작업은 <a href={`/posts/${career.post.slug}/`}>{career.post.title}</a>에 적었습니다.
+            여기서 한 작업은
+            {career.posts.map((p, i) => (
+              <>{i > 0 && ", "}<a href={`/posts/${p.slug}/`}>{p.title}</a></>
+            ))}
+            에 적었습니다.
           </p>
         </article>
       </section>
