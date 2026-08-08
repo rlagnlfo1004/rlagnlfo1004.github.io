@@ -613,6 +613,12 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .work__wins { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 9px; }
 .work__wins li { font-size: 15px; line-height: 1.75; color: var(--ink); text-wrap: pretty; }
 .work__wins li::marker { color: var(--clay); }
+/* 맨 앞에 오는 경력 블록만 왼쪽에 선을 세워 무게를 준다. */
+.work--lead {
+  padding: 20px 0 20px 20px;
+  border-top: 0; border-left: 2px solid var(--clay);
+}
+.work__link { margin: 14px 0 0; font-size: 13.5px; color: var(--ink-3); }
 
 .edu__head {
   display: flex; align-items: baseline; justify-content: space-between;
