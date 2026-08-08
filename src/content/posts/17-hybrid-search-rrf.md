@@ -4,6 +4,7 @@ description: "\"작년에 계약 얘기 나눴던 메일\"은 단어가 하나�
 date: 2026-08-07
 project: "메일상자"
 tags: ["하이브리드 검색", "RRF", "pgvector", "임베딩", "PostgreSQL", "Spring AI"]
+featured: true
 ---
 
 ## [배경 - 단어가 안 겹치면 못 찾는다]

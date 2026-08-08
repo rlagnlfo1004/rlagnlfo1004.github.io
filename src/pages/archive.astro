@@ -1,0 +1,125 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const order = ["케이톡", "레인보우TV", "아주이벤트", "메일상자", "아올다 클라우드", "공통", "회고"];
+
+const projectCounts = new Map<string, number>();
+posts.forEach((p) => projectCounts.set(p.data.project, (projectCounts.get(p.data.project) ?? 0) + 1));
+const projects = order
+  .filter((p) => projectCounts.has(p))
+  .map((p) => ({ name: p, count: projectCounts.get(p)! }))
+  .sort((a, b) => b.count - a.count);
+
+const tagCounts = new Map<string, number>();
+posts.forEach((p) => p.data.tags.forEach((t) => tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)));
+const tags = [...tagCounts.entries()]
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "ko"));
+
+// 연도별로 묶어서 전체를 한 화면에 늘어놓습니다.
+const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))].sort((a, b) => b - a);
+const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" });
+---
+<BaseLayout
+  title="아카이브 · 김휘래 개발 기록"
+  description={`프로젝트 ${projects.length}개, 태그 ${tags.length}개, 글 ${posts.length}편을 한곳에 모았습니다.`}
+>
+  <div class="shell" style="--measure: 800px">
+    <main id="content">
+      <h1 class="page-title">아카이브</h1>
+      <p class="page-lead">
+        프로젝트 {projects.length}개, 태그 {tags.length}개, 글 {posts.length}편.
+      </p>
+
+      <section class="section">
+        <div class="section__head"><h2>프로젝트</h2><span>글 수 순</span></div>
+        <div class="tiles">
+          {projects.map((p) => (
+            <a class="tile" href={`/?project=${encodeURIComponent(p.name)}`}>
+              <span>{p.name}</span>
+              <b class="tnum">{p.count}</b>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section__head"><h2>태그</h2><span>{tags.length}개</span></div>
+        <div class="tag-cloud">
+          {tags.map((t) => (
+            <span class="tag-chip" data-tag={t.name}>{t.name} <b class="tnum">{t.count}</b></span>
+          ))}
+        </div>
+        <p class="list-note">태그를 누르면 아래 목록이 그 태그의 글만 남습니다.</p>
+      </section>
+
+      <section class="section">
+        <div class="section__head"><h2>전체 글</h2><span id="archive-count">{posts.length}편</span></div>
+        {years.map((year) => (
+          <div class="year">
+            <h3 class="year__label tnum">{year}</h3>
+            <div class="post-list">
+              {posts
+                .filter((p) => p.data.date.getFullYear() === year)
+                .map((post) => (
+                  <article
+                    class="post-row"
+                    data-project={post.data.project}
+                    data-tags={post.data.tags.join("|")}
+                  >
+                    <div class="post-row__rail">
+                      <time class="tnum" datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+                      <b>{post.data.project}</b>
+                    </div>
+                    <div>
+                      <h3><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
+                      <p>{post.data.description}</p>
+                    </div>
+                  </article>
+                ))}
+            </div>
+          </div>
+        ))}
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  const chips = [...document.querySelectorAll<HTMLElement>("[data-tag]")];
+  const rows = [...document.querySelectorAll<HTMLElement>(".post-row")];
+  const countEl = document.getElementById("archive-count");
+  let active: string | null = null;
+
+  function apply() {
+    let shown = 0;
+    rows.forEach((row) => {
+      const tags = (row.dataset.tags ?? "").split("|");
+      const match = active === null || tags.includes(active);
+      row.hidden = !match;
+      row.classList.remove("is-last");
+      if (match) shown++;
+    });
+    rows.filter((r) => !r.hidden).at(-1)?.classList.add("is-last");
+
+    // 글이 하나도 없는 연도 묶음은 제목까지 감춘다.
+    document.querySelectorAll<HTMLElement>(".year").forEach((y) => {
+      y.hidden = !y.querySelector<HTMLElement>(".post-row:not([hidden])");
+    });
+
+    if (countEl) countEl.textContent = active ? `${active} ${shown}편` : `${rows.length}편`;
+  }
+
+  chips.forEach((chip) =>
+    chip.addEventListener("click", () => {
+      active = active === chip.dataset.tag ? null : chip.dataset.tag!;
+      chips.forEach((c) => c.toggleAttribute("aria-current", c.dataset.tag === active));
+      apply();
+    })
+  );
+</script>

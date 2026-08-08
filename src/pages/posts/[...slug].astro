@@ -33,6 +33,8 @@ const { Content, headings, remarkPluginFrontmatter } = await render(post);
   date={post.data.date}
   readingMinutes={remarkPluginFrontmatter?.minutes}
   headings={headings}
+  tags={post.data.tags}
+  metrics={post.data.metrics}
   prev={prev}
   next={next}
 >

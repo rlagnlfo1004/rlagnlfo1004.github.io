@@ -10,12 +10,16 @@ interface Props {
   date: Date;
   readingMinutes?: number;
   headings: MarkdownHeading[];
+  tags?: string[];
+  metrics?: { label: string; value: string }[];
   prev?: { slug: string; title: string };
   next?: { slug: string; title: string };
 }
 
-const { title, description, project, date, readingMinutes, headings, prev, next } =
-  Astro.props;
+const {
+  title, description, project, date, readingMinutes, headings,
+  tags = [], metrics = [], prev, next,
+} = Astro.props;
 
 const dateText = date.toLocaleDateString("ko-KR", {
   year: "numeric", month: "2-digit", day: "2-digit",
@@ -34,6 +38,14 @@ const dateText = date.toLocaleDateString("ko-KR", {
         <h1 class="post-title">{title}</h1>
         <p class="post-lead">{description}</p>
 
+        {metrics.length > 0 && (
+          <dl class="post-metrics" aria-label="이 글에서 측정한 값">
+            {metrics.map((m) => (
+              <div><dt>{m.label}</dt><dd class="tnum">{m.value}</dd></div>
+            ))}
+          </dl>
+        )}
+
         <div class="prose">
           <slot />
         </div>
@@ -47,7 +59,7 @@ const dateText = date.toLocaleDateString("ko-KR", {
             </a>
           )}
           {next && (
-            <a href={`/posts/${next.slug}/`}>
+            <a class="post-nav__next" href={`/posts/${next.slug}/`}>
               <span>다음 글 →</span><b>{next.title}</b>
             </a>
           )}
@@ -55,6 +67,6 @@ const dateText = date.toLocaleDateString("ko-KR", {
       )}
     </main>
 
-    <TableOfContents headings={headings} />
+    <TableOfContents headings={headings} tags={tags} />
   </div>
 </BaseLayout>

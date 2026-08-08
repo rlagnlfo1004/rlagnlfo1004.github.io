@@ -3,6 +3,7 @@ import type { MarkdownHeading } from "astro";
 
 interface Props {
   headings: MarkdownHeading[];
+  tags?: string[];
 }
 
 // h2·h3만 쓰고, 마크다운에서 넘어온 대괄호를 걷어냅니다.
@@ -19,6 +20,12 @@ const items = Astro.props.headings
     {items.map((h) => (
       <a href={`#${h.slug}`} data-depth={h.depth} data-toc-link>{h.text}</a>
     ))}
+    {(Astro.props.tags ?? []).length > 0 && (
+      <div class="toc__tags">
+        <span class="toc__label">태그</span>
+        <div class="tags">{Astro.props.tags!.map((t) => <span>{t}</span>)}</div>
+      </div>
+    )}
   </nav>
 )}
 

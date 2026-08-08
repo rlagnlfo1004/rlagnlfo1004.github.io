@@ -391,41 +391,254 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 
 .post-list { display: flex; flex-direction: column; }
 .post-row {
-  display: grid; grid-template-columns: 1fr 200px; gap: 28px; align-items: start;
-  padding: 26px 0; border-bottom: 0.5px solid var(--rule-soft);
+  display: grid; grid-template-columns: 150px 1fr; gap: 28px; align-items: start;
+  padding: 22px 0; border-bottom: 0.5px solid var(--rule-soft);
 }
+/* 날짜와 프로젝트를 왼쪽 레일에 세워 제목 줄을 가지런히 맞춘다. */
+.post-row__rail {
+  display: flex; flex-direction: column; gap: 3px;
+  font-family: "Inter", var(--font-sans); font-size: 12.5px;
+  color: var(--ink-3); padding-top: 5px;
+}
+.post-row__rail b { color: var(--clay-text); font-weight: 600; }
+.post-row h3 {
+  margin: 0 0 6px; font-family: var(--font-serif);
+  font-size: 19px; line-height: 1.45; font-weight: 600; letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.post-row h3 a { color: var(--ink); }
+.post-row h3 a:hover { color: var(--clay-text); text-decoration: none; }
 /* display 를 직접 지정했으므로 브라우저 기본 [hidden] 규칙이 밀린다.
    필터가 row.hidden 을 켜도 안 사라지던 원인. */
 .post-row[hidden] { display: none; }
 .post-row:last-child,
 .post-row.is-last { border-bottom: 0; }
-.post-row--no-cover { grid-template-columns: 1fr; }
-.post-row__meta {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12.5px; color: var(--ink-3); margin-bottom: 9px;
-}
-.post-row__meta b { color: var(--clay-text); font-weight: 600; }
-.post-row h2 {
-  margin: 0 0 8px; font-family: var(--font-serif);
-  font-size: 22px; line-height: 1.45; font-weight: 600; letter-spacing: -0.01em;
-  text-wrap: pretty;
-}
-.post-row h2 a { color: var(--ink); }
-.post-row h2 a:hover { color: var(--clay-text); text-decoration: none; }
-.post-row p { margin: 0 0 12px; font-size: 15.5px; line-height: 1.7; color: var(--ink-2); text-wrap: pretty; }
+.post-row p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--ink-2); text-wrap: pretty; }
 .post-row p b { color: var(--ink); font-family: "Inter", var(--font-sans); font-weight: 600; }
-.post-row__cover {
-  width: 200px; height: 132px; object-fit: cover;
-  border: 0.5px solid var(--rule); border-radius: var(--radius); background: var(--sunk);
-}
 .tags { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12.5px; color: var(--ink-3); }
 .tags span { padding: 2px 8px; border-radius: 5px; background: var(--sunk); }
+.tags--lg { font-size: 13.5px; gap: 8px; }
+.tags--lg span { padding: 4px 11px; border-radius: 6px; }
+
+.list-note { margin: 20px 0 0; font-size: 13.5px; line-height: 1.7; color: var(--ink-3); }
+
+/* ── hero ───────────────────────────────────────────────── */
+/* 히어로만 본문 폭을 벗어나 배경을 깔기 때문에 shell 밖에 둔다. */
+.hero {
+  border-bottom: 0.5px solid var(--rule);
+  background: radial-gradient(680px 300px at 8% 0%, var(--clay-soft), transparent 70%);
+}
+.hero__inner {
+  max-width: 1180px; margin: 0 auto; padding: 68px 28px 52px;
+  display: grid; grid-template-columns: 1fr 240px; gap: 56px; align-items: end;
+}
+.hero__inner--single { grid-template-columns: 1fr; }
+.eyebrow {
+  margin: 0 0 14px; font-family: var(--font-mono);
+  font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
+  color: var(--clay-text);
+}
+.hero__stats {
+  margin: 0; display: flex; flex-direction: column; gap: 10px;
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3);
+}
+.hero__stats > div {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding-bottom: 8px; border-bottom: 0.5px solid var(--rule);
+}
+.hero__stats > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.hero__stats dt, .hero__stats dd { margin: 0; }
+.hero__stats dd { color: var(--ink); }
+
+.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.links a {
+  display: inline-flex; align-items: center; height: 34px; padding: 0 16px;
+  font-size: 13.5px; color: var(--ink-2);
+  border: 0.5px solid var(--rule); border-radius: 100px;
+}
+.links a:first-child { color: var(--clay-text); border-color: var(--clay); }
+.links a:hover { color: var(--ink); text-decoration: none; }
+
+/* ── 실측 밴드 ──────────────────────────────────────────── */
+.band { background: var(--clay); }
+.band__inner {
+  max-width: 1180px; margin: 0 auto; padding: 36px 28px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+}
+.band__item { display: flex; flex-direction: column; gap: 6px; color: #FDF6F2; }
+.band__item:hover { text-decoration: none; }
+.band__item:hover b { text-decoration: underline; text-underline-offset: 4px; }
+.band__item b {
+  font-family: var(--font-mono); font-size: 30px; font-weight: 500;
+  letter-spacing: -0.03em; line-height: 1.15;
+}
+.band__item span { font-size: 13px; line-height: 1.55; opacity: 0.86; }
+
+/* ── 섹션 머리 ──────────────────────────────────────────── */
+.section { margin-top: 52px; }
+.section:first-of-type { margin-top: 44px; }
+.section__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; margin-bottom: 20px;
+}
+.section__head h2 {
+  margin: 0; font-family: var(--font-mono);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.06em; color: var(--ink-2);
+}
+.section__head span { font-size: 13px; color: var(--ink-3); }
+
+/* ── 대표글 카드 ────────────────────────────────────────── */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 20px; background: var(--surface);
+  border: 0.5px solid var(--rule); border-top: 2px solid var(--clay);
+  border-radius: var(--radius);
+}
+.card__meta {
+  font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.04em; color: var(--clay-text);
+}
+.card h3 {
+  margin: 0; font-family: var(--font-serif);
+  font-size: 18px; line-height: 1.4; font-weight: 600; letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.card h3 a { color: var(--ink); }
+.card h3 a:hover { color: var(--clay-text); text-decoration: none; }
+.card p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--ink-2); }
+.card .tags { margin-top: auto; padding-top: 8px; }
+
+/* ── 아카이브와 소개 ────────────────────────────────────── */
+.page-title {
+  margin: 0 0 12px; font-family: var(--font-serif);
+  font-size: 34px; line-height: 1.3; font-weight: 600; letter-spacing: -0.015em;
+}
+.page-lead { margin: 0 0 8px; font-size: 15.5px; color: var(--ink-2); }
+
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tile {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 14px 16px; background: var(--surface);
+  border: 0.5px solid var(--rule); border-radius: var(--radius);
+  font-size: 15px; color: var(--ink);
+}
+.tile:hover { border-color: var(--clay); text-decoration: none; }
+.tile b { font-family: var(--font-mono); font-size: 19px; font-weight: 500; color: var(--clay-text); }
+
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 11px; cursor: pointer;
+  font-size: 13px; color: var(--ink-2);
+  border: 0.5px solid var(--rule); border-radius: 100px;
+  transition: color 140ms, border-color 140ms;
+}
+.tag-chip:hover { color: var(--ink); border-color: var(--ink-3); }
+.tag-chip b { font-family: var(--font-mono); font-weight: 500; color: var(--ink-3); }
+.tag-chip[aria-current] { color: var(--clay-text); border-color: var(--clay); }
+.tag-chip[aria-current] b { color: var(--clay-text); }
+
+.year { margin-top: 28px; }
+.year[hidden] { display: none; }
+.year__label {
+  margin: 0 0 4px; font-family: var(--font-mono);
+  font-size: 13px; font-weight: 500; color: var(--ink-3); letter-spacing: 0.06em;
+}
+
+.row { display: grid; grid-template-columns: 120px 1fr; gap: 24px; margin-top: 40px; }
+.row h2 {
+  margin: 0; padding-top: 4px; font-family: var(--font-mono);
+  font-size: 12px; font-weight: 500; letter-spacing: 0.08em; color: var(--ink-3);
+}
+.row__text { margin: 0; font-size: 15.5px; line-height: 1.8; color: var(--ink-2); }
+
+.timeline { margin: 0; padding: 0; list-style: none; }
+.timeline__item {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 10px 0 10px 16px;
+  border-left: 2px solid var(--rule); border-top: 0.5px solid var(--rule-soft);
+  font-size: 15px; line-height: 1.5;
+}
+.timeline__item:first-child { border-top: 0; }
+.timeline__item.is-now { border-left-color: var(--clay); }
+.timeline__item span:last-child {
+  flex: none; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3);
+}
+
+.project-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.project-list li { display: flex; flex-direction: column; gap: 2px; }
+.project-list b { font-size: 15.5px; font-weight: 600; letter-spacing: -0.01em; }
+.project-list span { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+.project-list__when { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
+
+/* ── 글 머리 실측 요약 ──────────────────────────────────── */
+.post-metrics {
+  margin: 0 0 36px; padding: 18px 20px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  background: var(--surface); border: 0.5px solid var(--rule); border-radius: var(--radius);
+}
+.post-metrics > div { display: flex; flex-direction: column; gap: 4px; }
+.post-metrics dt {
+  font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.06em; color: var(--ink-3);
+}
+.post-metrics dd {
+  margin: 0; font-family: var(--font-mono);
+  font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.2;
+}
+.post-metrics > div:first-child dd { color: var(--clay-text); }
+
+.toc__tags { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 0.5px solid var(--rule); }
+
+/* ── 소개 페이지의 작업 블록 ────────────────────────────── */
+.work { padding: 24px 0; border-top: 0.5px solid var(--rule); }
+.work:first-of-type { border-top: 0; padding-top: 4px; }
+.work__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px 20px; margin-bottom: 10px;
+}
+.work__head h3 {
+  margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px;
+  font-family: var(--font-serif); font-size: 20px; font-weight: 600; letter-spacing: -0.01em;
+}
+.work__head h3 span { font-family: var(--font-sans); font-size: 14px; font-weight: 400; color: var(--ink-2); }
+.work__when { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
+.work__summary { margin: 0 0 14px; font-size: 15.5px; line-height: 1.75; color: var(--ink-2); }
+.work__stats {
+  margin: 0 0 16px; display: flex; flex-wrap: wrap; gap: 10px;
+}
+.work__stats > div {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 7px 13px; background: var(--surface);
+  border: 0.5px solid var(--rule); border-radius: 100px;
+}
+.work__stats dt { font-size: 12.5px; color: var(--ink-3); }
+.work__stats dd {
+  margin: 0; font-family: var(--font-mono); font-size: 14px;
+  font-weight: 500; color: var(--clay-text);
+}
+.work__wins { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 9px; }
+.work__wins li { font-size: 15px; line-height: 1.75; color: var(--ink); text-wrap: pretty; }
+.work__wins li::marker { color: var(--clay); }
+
+@media (max-width: 1000px) {
+  .hero__inner { grid-template-columns: 1fr; gap: 32px; }
+  .hero__stats { flex-direction: row; flex-wrap: wrap; gap: 20px; }
+  .hero__stats > div { border-bottom: 0; padding-bottom: 0; gap: 8px; }
+  .cards, .tiles { grid-template-columns: repeat(2, 1fr); }
+  .band__inner { grid-template-columns: repeat(2, 1fr); gap: 26px; }
+}
 
 @media (max-width: 640px) {
-  .post-row, .post-row--no-cover { grid-template-columns: 1fr; }
-  .post-row__cover { width: 100%; height: 180px; }
+  .post-row { grid-template-columns: 1fr; gap: 8px; }
+  .post-row__rail { flex-direction: row; gap: 10px; padding-top: 0; }
+  .cards, .tiles, .band__inner { grid-template-columns: 1fr; }
+  .row { grid-template-columns: 1fr; gap: 12px; }
+  .band__item b { font-size: 26px; }
   .home-title { font-size: 32px; }
   .post-title { font-size: 28px; }
+  .post-metrics { grid-template-columns: 1fr; }
   body { font-size: 17px; }
 }
 

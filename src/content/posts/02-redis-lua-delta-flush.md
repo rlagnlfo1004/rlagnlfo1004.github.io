@@ -4,6 +4,7 @@ description: "Redis 조회수를 DB로 옮길 때 DEL을 쓰면 16.85%가 유실
 date: 2026-08-06
 project: "아주이벤트"
 tags: ["Redis", "Lua", "동시성"]
+featured: true
 ---
 
 ## [배경 - 조회수가 조금씩 비는 것 같다]

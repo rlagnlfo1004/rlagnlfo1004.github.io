@@ -4,6 +4,7 @@ description: "앱과 스토어 웹훅이 같은 결제를 거의 동시에 밀�
 date: 2026-08-07
 project: "케이톡"
 tags: ["멱등성", "결제", "Spring", "JPA", "동시성"]
+featured: true
 ---
 
 ## [배경 - 중복 요청이 예외가 아니라 기본 동작이었다]

@@ -1,6 +1,5 @@
 ---
 import { getCollection } from "astro:content";
-import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
@@ -11,62 +10,114 @@ const order = ["케이톡", "레인보우TV", "아주이벤트", "메일상자",
 const counts = new Map<string, number>();
 posts.forEach((p) => counts.set(p.data.project, (counts.get(p.data.project) ?? 0) + 1));
 const projects = order.filter((p) => counts.has(p));
+
+const featured = posts.filter((p) => p.data.featured).slice(0, 3);
+const featuredIds = new Set(featured.map((p) => p.id));
+const rest = posts.filter((p) => !featuredIds.has(p.id));
+
+const latest = posts[0]?.data.date;
+const fmt = (d: Date) =>
+  d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
+
+// 밴드에 올리는 숫자는 전부 해당 글에서 이미 측정해 공개한 값입니다.
+const band = [
+  { value: "16.85% → 0", note: "DEL 대신 델타 차감으로 바꾼 뒤 조회수 유실", slug: "02-redis-lua-delta-flush" },
+  { value: "30 / 30", note: "SELECT FOR UPDATE 로 막지 못한 INSERT 경쟁", slug: "04-lock-table-insert-race" },
+  { value: "6.5배", note: "트랜잭션 안에서 외부 API 를 부를 때 응답 시간", slug: "10-transactional-external-call" },
+  { value: "466명", note: "실제 사용자를 받아 본 서비스의 가입자 수", slug: "06-retro-real-users" },
+];
 ---
 <BaseLayout title="김휘래 개발 기록">
+  <section class="hero">
+    <div class="hero__inner">
+      <div>
+        <p class="eyebrow">MEASURED, NOT ASSUMED</p>
+        <h1 class="home-title">문제를 정의하고 서비스로 증명해왔습니다</h1>
+        <p class="home-lead">
+          불편을 그냥 넘기지 않고 해결할 문제로 정의한 뒤 직접 만들어 운영했습니다.
+          교내 공지를 조건에 맞게 밀어주는 아주이벤트는 가입자 466명에 MAU 300명,
+          여러 계정의 메일을 한곳에서 보는 메일상자는 가입자 322명이 쓰고 있어요.
+        </p>
+        <p class="home-note">
+          정답이 하나가 아닌 자리에서 무엇을 고르고 무엇을 버렸는지, 그 근거를 직접 잰 숫자와 함께 적습니다.
+        </p>
+      </div>
+
+      <dl class="hero__stats">
+        <div><dt>글</dt><dd class="tnum">{posts.length}</dd></div>
+        <div><dt>프로젝트</dt><dd class="tnum">{projects.length}</dd></div>
+        <div><dt>실측 데이터</dt><dd>전건</dd></div>
+        {latest && <div><dt>최근</dt><dd class="tnum">{fmt(latest)}</dd></div>}
+      </dl>
+    </div>
+  </section>
+
+  <section class="band" aria-label="글에서 측정한 값">
+    <div class="band__inner">
+      {band.map((b) => (
+        <a class="band__item" href={`/posts/${b.slug}/`}>
+          <b class="tnum">{b.value}</b>
+          <span>{b.note}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
   <div class="shell" style="--measure: 800px">
     <main id="content">
-      <h1 class="home-title">문제를 정의하고 서비스로 증명해왔습니다</h1>
-      <p class="home-lead">
-        불편을 그냥 넘기지 않고 해결할 문제로 정의한 뒤 직접 만들어 운영했습니다.
-        교내 공지를 조건에 맞게 밀어주는 아주이벤트는 가입자 466명에 MAU 300명,
-        여러 계정의 메일을 한곳에서 보는 메일상자는 가입자 322명이 쓰고 있어요.
-      </p>
-      <p class="home-note">
-        정답이 하나가 아닌 자리에서 무엇을 고르고 무엇을 버렸는지, 그 근거를 직접 잰 숫자와 함께 적습니다.
-      </p>
+      {featured.length > 0 && (
+        <section class="section">
+          <div class="section__head">
+            <h2>먼저 읽어볼 글</h2>
+            <span>직접 고른 {featured.length}편</span>
+          </div>
+          <div class="cards">
+            {featured.map((post) => (
+              <article class="card">
+                <div class="card__meta">
+                  {post.data.project} · <time class="tnum" datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+                </div>
+                <h3><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
+                <p>{post.data.description}</p>
+                <div class="tags">{post.data.tags.slice(0, 3).map((t) => <span>{t}</span>)}</div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
-      <div class="filters" role="group" aria-label="프로젝트 필터">
-        <button type="button" data-filter="all" aria-pressed="true">전체 {posts.length}</button>
-        {projects.map((p) => (
-          <button type="button" data-filter={p} aria-pressed="false">{p} {counts.get(p)}</button>
-        ))}
-      </div>
+      <section class="section">
+        <div class="section__head">
+          <h2>전체 글</h2>
+          <span>{posts.length}편</span>
+        </div>
 
-      <div class="post-list">
-        {posts.map((post) => (
-          <article
-            class:list={["post-row", !post.data.cover && "post-row--no-cover"]}
-            data-project={post.data.project}
-          >
-            <div>
-              <div class="post-row__meta">
+        <div class="filters" role="group" aria-label="프로젝트 필터">
+          <button type="button" data-filter="all" aria-pressed="true">전체 {posts.length}</button>
+          {projects.map((p) => (
+            <button type="button" data-filter={p} aria-pressed="false">{p} {counts.get(p)}</button>
+          ))}
+        </div>
+
+        <div class="post-list">
+          {rest.map((post) => (
+            <article class="post-row" data-project={post.data.project}>
+              <div class="post-row__rail">
+                <time class="tnum" datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
                 <b>{post.data.project}</b>
-                <span>·</span>
-                <time class="tnum" datetime={post.data.date.toISOString()}>
-                  {post.data.date.toLocaleDateString("ko-KR", {
-                    year: "numeric", month: "2-digit", day: "2-digit",
-                  })}
-                </time>
               </div>
-              <h2><a href={`/posts/${post.id}/`}>{post.data.title}</a></h2>
-              <p>{post.data.description}</p>
-              <div class="tags">
-                {post.data.tags.map((t) => <span>{t}</span>)}
+              <div>
+                <h3><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
+                <p>{post.data.description}</p>
               </div>
-            </div>
-            {post.data.cover && (
-              <Image
-                class="post-row__cover"
-                src={post.data.cover}
-                alt={post.data.coverAlt ?? ""}
-                width={400}
-                height={264}
-                loading="lazy"
-              />
-            )}
-          </article>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+        <p class="list-note">
+          위 목록은 먼저 읽어볼 글 {featured.length}편을 뺀 {rest.length}편입니다.
+          프로젝트와 태그로 좁혀 보려면 <a href="/archive/">아카이브</a>를 보세요.
+        </p>
+      </section>
     </main>
   </div>
 </BaseLayout>
@@ -86,11 +137,21 @@ const projects = order.filter((p) => counts.has(p));
     visible.at(-1)?.classList.add("is-last");
   }
 
+  function select(key: string) {
+    const btn = buttons.find((b) => b.dataset.filter === key);
+    if (!btn) return;
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    applyFilter(key);
+  }
+
   buttons.forEach((btn) =>
-    btn.addEventListener("click", () => {
-      const key = btn.dataset.filter!;
-      buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-      applyFilter(key);
-    })
+    btn.addEventListener("click", () => select(btn.dataset.filter!))
   );
+
+  // 아카이브의 프로젝트 타일이 /?project=케이톡 로 넘어온다.
+  const wanted = new URLSearchParams(location.search).get("project");
+  if (wanted) {
+    select(wanted);
+    document.querySelector(".filters")?.scrollIntoView({ block: "start" });
+  }
 </script>

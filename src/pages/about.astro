@@ -1,0 +1,185 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// 내용은 resume 저장소의 이력서 원문에서 가져왔습니다.
+const services = [
+  {
+    name: "아주이벤트",
+    role: "학교 공지사항 알림 서비스",
+    period: "2025.06 ~ 운영 중",
+    team: "4인 (BE 2, FE 2)",
+    href: "https://www.ajouevent.com/",
+    summary:
+      "50여 개 공지 게시판을 크롤링해 공지와 키워드 구독, 실시간 푸시 알림을 제공합니다.",
+    stats: [
+      { label: "가입자", value: "466명" },
+      { label: "MAU", value: "300명" },
+      { label: "최근 90일 푸시", value: "75,000건" },
+    ],
+    wins: [
+      "FCM 동기 발송으로 서블릿 스레드가 오래 잡히던 것을 콜백 기반 비동기와 전용 스레드 풀로 나눠 P95 를 5.24초에서 2.53초로 줄였습니다. 분당 10만 건 규모를 견딥니다.",
+      "서버나 FCM 장애 때 알림이 사라지던 것을 Transactional Outbox 로 바꿔, 10만 건 발송 테스트에서 유실 1,200건이 0건이 됐습니다.",
+      "관리자가 공지 전체를 눈으로 훑어 배너를 고르던 일을 AI 추천으로 바꿔 검토 대상을 상위 3~5개로 좁혔습니다.",
+    ],
+  },
+  {
+    name: "메일상자",
+    role: "AI 기반 다중 계정 메일 인박스 자동화",
+    period: "2026.03 ~ 진행 중",
+    team: "4인 (BE 2, FE 2)",
+    href: "https://mail.ajou.app/",
+    summary:
+      "여러 Gmail 계정을 한 인박스에서 보고, 자동 분류와 대화 맥락 기반 답장 초안을 제공합니다.",
+    stats: [
+      { label: "가입자", value: "322명" },
+      { label: "MAU", value: "200명" },
+    ],
+    wins: [
+      "Pub/Sub 수신 뒤 조회와 저장, 전송을 요청 안에서 한 번에 처리하던 구조를 RabbitMQ 기반 비동기로 옮겨 backpressure 와 실패 격리를 얻었습니다.",
+      "같은 Gmail 스레드를 동시에 처리하며 생기던 경쟁 상태를 비관적 잠금과 Unique 제약으로 막았습니다.",
+      "결제 직후 네트워크가 끊기면 결제와 플랜 상태가 어긋나던 것을 결제사 웹훅으로 서버가 확정하도록 바꿨습니다.",
+    ],
+  },
+  {
+    name: "아올다 클라우드",
+    role: "OpenStack 기반 클라우드 콘솔",
+    period: "2025.05 ~ 진행 중",
+    team: "12인 (BE 8, FE 3, Design 1)",
+    href: "https://github.com/Aolda/cloud-console-backend",
+    summary:
+      "학내 IaaS 플랫폼의 자체 관리 콘솔과 운영 자동화를 만듭니다.",
+    stats: [],
+    wins: [
+      "외부 컴포넌트 하나가 느려지면 전체가 같이 멈추던 것을 Circuit Breaker 와 Retry 로 끊어 장애 전파를 막았습니다.",
+      "OpenStack 과 로컬 DB 가 어긋나는 문제를 보상 트랜잭션과 ShedLock 기반 검증 스케줄러로 맞췄습니다.",
+      "흩어져 있던 로그와 트레이스, 메트릭을 Loki, Tempo, Prometheus, Grafana 로 모았습니다.",
+    ],
+  },
+];
+
+const activities = [
+  { name: "HAMALAB 서버 개발 인턴십", period: "2026.06 ~ ing", now: true },
+  { name: "아주대학교 코딩트레이너, 객체지향프로그래밍 및 실습", period: "2026.03 ~ 2026.06" },
+  { name: "소프트웨어학과 학술 동아리 한터 37기 회장", period: "2025.01 ~ 2025.12" },
+  { name: "프라이빗 클라우드 아올다 1기 개발팀", period: "2025.03 ~ ing" },
+  { name: "BOAZ 25기, 데이터 엔지니어링", period: "2025.06 ~ 2025.12" },
+];
+
+const awards = [
+  { name: "아주대학교 해커톤 아주톤 최우수상", detail: "보고서 작성 자동화 서비스", when: "2025.05" },
+  { name: "아주대학교 파란학기제 시선집중상", detail: "OnRank, 스터디 활동 관리 플랫폼", when: "2025.06" },
+  { name: "아주대학교 동아리 소학회 콘테스트", detail: "2025 장려상, 2024 동상", when: "2024 ~ 2025" },
+];
+
+const stack = [
+  "Java", "Spring Boot", "JPA", "QueryDSL", "MySQL", "PostgreSQL",
+  "Redis", "RabbitMQ", "FCM", "AWS", "Resilience4j",
+];
+---
+<BaseLayout
+  title="소개 · 김휘래 개발 기록"
+  description="정답이 없는 자리에서 트레이드오프를 따져 결정하고, 그 결정을 실제 사용자에게 검증해왔습니다."
+>
+  <section class="hero">
+    <div class="hero__inner hero__inner--single">
+      <div>
+        <p class="eyebrow">DEFINE, BUILD, MEASURE</p>
+        <h1 class="home-title">김휘래</h1>
+        <p class="home-lead">
+          정답이 없는 개발 환경에서 트레이드오프를 이해하고 상황에 맞는 의사결정을 내리는 개발자입니다.
+          제한된 단일 인스턴스에서 분당 10만 건 규모의 푸시를 처리하며 처리량과 정합성, 인프라 비용 사이를 계속 저울질했습니다.
+        </p>
+        <p class="home-note">
+          구현에서 끝내지 않고 그 결정이 사용자 경험과 운영에 무엇을 남기는지까지 봅니다.
+          직접 만든 두 서비스를 실제 사용자에게 열어두고 고쳐왔어요.
+        </p>
+        <div class="links">
+          <a href="https://github.com/rlagnlfo1004" rel="me noopener">GitHub</a>
+          <a href="https://rlagnlfo1004.tistory.com" rel="noopener">Tistory</a>
+          <a href="mailto:hramst0618@gmail.com">이메일</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell" style="--measure: 800px">
+    <main id="content">
+      <section class="section">
+        <div class="section__head"><h2>만들고 운영한 것</h2><span>{services.length}개</span></div>
+
+        {services.map((s) => (
+          <article class="work">
+            <div class="work__head">
+              <h3>
+                <a href={s.href} rel="noopener">{s.name}</a>
+                <span>{s.role}</span>
+              </h3>
+              <div class="work__when tnum">{s.period} · {s.team}</div>
+            </div>
+            <p class="work__summary">{s.summary}</p>
+
+            {s.stats.length > 0 && (
+              <dl class="work__stats">
+                {s.stats.map((st) => (
+                  <div><dt>{st.label}</dt><dd class="tnum">{st.value}</dd></div>
+                ))}
+              </dl>
+            )}
+
+            <ul class="work__wins">
+              {s.wins.map((w) => <li>{w}</li>)}
+            </ul>
+          </article>
+        ))}
+      </section>
+
+      <section class="row">
+        <h2>다루는 것</h2>
+        <div class="tags tags--lg">{stack.map((s) => <span>{s}</span>)}</div>
+      </section>
+
+      <section class="row">
+        <h2>활동</h2>
+        <ul class="timeline">
+          {activities.map((a) => (
+            <li class:list={["timeline__item", a.now && "is-now"]}>
+              <span>{a.name}</span>
+              <span class="tnum">{a.period}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="row">
+        <h2>수상</h2>
+        <ul class="project-list">
+          {awards.map((a) => (
+            <li>
+              <b>{a.name}</b>
+              <span>{a.detail}</span>
+              <span class="project-list__when tnum">{a.when}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="row">
+        <h2>교육</h2>
+        <p class="row__text">
+          아주대학교 소프트웨어학과 2021.03 입학, 2027.02 졸업 예정.
+          전공 4.28, 전체 4.20 (4.5 만점) 이고 성적 장학금을 네 번 받았습니다.
+        </p>
+      </section>
+
+      <section class="row">
+        <h2>쓰는 방식</h2>
+        <p class="row__text">
+          글마다 문제, 시도한 것, 실패한 것, 최종 선택과 그 대가를 순서대로 적습니다.
+          수치는 전부 직접 실행해 얻은 값이고 재현할 명령을 같이 남깁니다.
+          아직 재보지 못한 자리는 비워두고 무엇을 재야 하는지 적어둡니다.
+          <a href="/">글 목록</a>과 <a href="/archive/">아카이브</a>에서 볼 수 있어요.
+        </p>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
