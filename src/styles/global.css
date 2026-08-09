@@ -11,9 +11,11 @@
   --ink-3:      #8B9099;
   --rule:       rgba(22, 24, 26, 0.09);
   --rule-soft:  rgba(22, 24, 26, 0.06);
-  --clay:       #3F5FB0;
-  --clay-text:  #3A57A2;
-  --clay-soft:  #ECF0F9;
+  /* 파비콘 마크의 파랑입니다. 다만 이 값 그대로 글자에 쓰면 흰 배경에서 3.71:1 이라
+     본문 링크 기준(4.5:1)에 못 미칩니다. 채움색과 글자색을 나눠 둡니다. */
+  --clay:       #3182F6;
+  --clay-text:  #1B64DA;  /* 5.41:1 */
+  --clay-soft:  #EAF2FE;
   --mark:       #FBEFC4;
   --code-bg:    #F7F8FA;
 
@@ -42,9 +44,9 @@
   --ink-3:      #6C727C;
   --rule:       rgba(244, 245, 247, 0.12);
   --rule-soft:  rgba(244, 245, 247, 0.07);
-  --clay:       #7B9AE0;
-  --clay-text:  #8FAAE8;
-  --clay-soft:  #1A2333;
+  --clay:       #4593FC;
+  --clay-text:  #6BA6FD;  /* 7.71:1 */
+  --clay-soft:  #16243B;
   --mark:       #3D3620;
   --code-bg:    #14171A;
 
@@ -497,9 +499,11 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: end;
 }
 .hero__inner--single { grid-template-columns: 1fr; }
-.hero__inner--profile { grid-template-columns: 200px 1fr; align-items: center; gap: 36px; }
+/* 사진을 가운데 맞추면 글보다 24px 짧아 위아래가 다 어긋난다. 글 높이에 맞춰 늘려
+   두 모서리를 붙인다. 글이 길어져도 따라온다. 남는 폭은 cover 로 잘라낸다. */
+.hero__inner--profile { grid-template-columns: 200px 1fr; align-items: stretch; gap: 36px; }
 .profile {
-  width: 200px; height: auto; border-radius: 10px;
+  width: 100%; height: 100%; border-radius: 10px;
   border: 0.5px solid var(--rule); background: var(--surface);
   object-fit: cover;
 }
@@ -674,6 +678,8 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 
 @media (max-width: 1000px) {
   .hero__inner, .hero__inner--profile { grid-template-columns: 1fr; gap: 28px; }
+  /* 한 칸으로 접히면 맞출 상대가 없다. 사진은 원래 크기로 돌린다. */
+  .profile { width: 200px; height: auto; }
   .cards, .tiles { grid-template-columns: repeat(2, 1fr); }
 }
 
