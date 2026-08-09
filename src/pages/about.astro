@@ -71,6 +71,26 @@ const services = [
     ],
   },
   {
+    logo: null,
+    name: "선착순 예매 시스템",
+    role: "대기열 기반 선착순 예매",
+    period: "개인 프로젝트",
+    team: "1인",
+    href: "https://github.com/rlagnlfo1004/movie-ticketing-system",
+    summary:
+      "예매 시작 순간에 몰리는 요청을 대기열로 받아 처리 속도를 서버가 정하고, 재고는 원자적으로만 깎이게 만들었습니다.",
+    stats: [
+      { label: "발급된 티켓", value: "정확히 1,000장" },
+      { label: "처리량", value: "초당 4,938건" },
+      { label: "P95", value: "18.68ms" },
+    ],
+    wins: [
+      "Redis ZSET으로 줄을 세우고 스케줄러가 정해진 수만큼만 입장시켜, 유입 속도와 무관하게 예매 API에 도달하는 요청 수를 제한했습니다.",
+      "재고 확인과 차감 사이의 경쟁을 Lua 스크립트 하나로 묶었습니다. 재고 100장에 32스레드로 1,000회를 동시에 넣어 발급이 정확히 100건인 걸 확인했어요.",
+      "중복 클릭과 재시도를 Filter 계층에서 끊었습니다. 멱등키만 보지 않고 요청 본문을 정규화한 fingerprint까지 비교해, 같은 키에 다른 내용이 오는 경우를 구분합니다.",
+    ],
+  },
+  {
     logo: aoldaLogo,
     name: "아올다 클라우드",
     role: "OpenStack 기반 클라우드 콘솔",
@@ -168,7 +188,7 @@ const stack = [
         {services.map((s) => (
           <article class="work">
             <div class="work__head">
-              <span class="logo"><img src={s.logo.src} alt="" width="26" height="26" loading="lazy" /></span>
+              {s.logo && <span class="logo"><img src={s.logo.src} alt="" width="26" height="26" loading="lazy" /></span>}
               <h3>
                 <a href={s.href} rel="noopener">{s.name}</a>
                 <span>{s.role}</span>
