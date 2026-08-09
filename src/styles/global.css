@@ -21,9 +21,14 @@
   --font-sans:  "Pretendard Variable", Pretendard, -apple-system, sans-serif;
   --font-mono:  "JetBrains Mono", "D2Coding", ui-monospace, monospace;
 
-  --measure: 756px;
   --radius: 8px;
-  --toc-w: 176px;
+  --radius-lg: 12px;  /* 목록 행처럼 넓은 면을 칠할 때 */
+
+  /* 읽는 칸 하나를 화면 가운데에 두고, 목차와 도크는 그 바깥에 건다. */
+  --read: 820px;   /* 본문 한 칸의 폭 */
+  --toc-w: 200px;  /* 본문 오른쪽에 매다는 목차 */
+  --gutter: 56px;  /* 본문과 목차 사이 */
+  --dock-w: 76px;  /* 왼쪽 끝 아이콘 레일이 먹는 폭 */
 
   color-scheme: light;
 }
@@ -49,7 +54,7 @@
 /* ── base ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+html { scroll-behavior: smooth; scroll-padding-top: 32px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
@@ -91,37 +96,96 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .read-progress > i { display: block; height: 2px; width: 0; background: var(--clay); }
 
-.theme-toggle {
-  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
-  height: 28px; padding: 0 9px; cursor: pointer;
-  background: none; border: 0.5px solid var(--rule); border-radius: 7px;
-  color: var(--ink-3); font: inherit; font-size: 12px;
-  transition: color 140ms, border-color 140ms;
+/* ── 왼쪽 끝 아이콘 레일 ────────────────────────────────── */
+/* 예전 사이드바는 252px 를 먹으면서도 화면 왼쪽 끝이 아니라 가운데쯤에 떠 있었다.
+   미디엄의 왼쪽 레일처럼 화면 끝에 붙여 두고, 폭은 아이콘 한 줄만큼만 쓴다. */
+.dock {
+  position: fixed; z-index: 50;
+  top: 0; left: 0; height: 100vh; width: var(--dock-w);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 4px;
+  border-right: 0.5px solid var(--rule-soft);
 }
-.theme-toggle:hover { color: var(--ink); }
-.theme-toggle kbd {
-  font-family: "Inter", var(--font-sans); font-size: 11px;
-  color: var(--ink-2); background: none; border: 0;
+.dock__item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  width: 60px; padding: 10px 0; cursor: pointer;
+  background: none; border: 0; border-radius: 10px;
+  color: var(--ink-3); font: inherit;
+  transition: color 140ms, background 140ms;
+}
+.dock__item:hover { color: var(--ink); background: var(--sunk); text-decoration: none; }
+.dock__item[aria-current] { color: var(--clay-text); }
+.dock__item svg {
+  width: 20px; height: 20px; fill: none; stroke: currentColor;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+}
+.dock__item svg.dock__glyph { fill: currentColor; stroke: none; }
+.dock__label { font-size: 11px; line-height: 1; letter-spacing: -0.02em; }
+.dock__rule { width: 24px; height: 0.5px; margin: 8px 0; background: var(--rule); }
+
+@media (max-width: 900px) {
+  /* 좁은 화면에서는 왼쪽에 세울 자리가 없어 아래 가운데로 눕힌다. */
+  .dock {
+    top: auto; bottom: 12px; left: 50%; height: auto; width: auto;
+    transform: translateX(-50%); flex-direction: row; gap: 2px;
+    padding: 5px; border-right: 0; border: 0.5px solid var(--rule);
+    border-radius: 100px;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(8px);
+  }
+  .dock__item { width: 56px; padding: 7px 0; gap: 4px; }
+  .dock__label { font-size: 10px; }
+  .dock__rule { width: 0.5px; height: 24px; margin: 0 4px; }
 }
 
 .site-footer {
   margin-top: auto;
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px 20px;
   border-top: 0.5px solid var(--rule);
-  padding: 28px 48px; font-size: 13.5px; color: var(--ink-3);
+  padding: 28px 0; font-size: 13.5px; color: var(--ink-3);
 }
+.site-footer__links { display: flex; gap: 16px; }
+.site-footer a { color: var(--ink-3); }
+.site-footer a:hover { color: var(--ink); text-decoration: none; }
 
 /* ── 본문 칸 ────────────────────────────────────────────── */
+/* 본문 한 칸을 화면 가운데에 두고, 레일이 먹는 폭만 왼쪽에서 빼 준다. */
+.app { padding-left: var(--dock-w); }
 .app__body { min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
-.app__main { padding: 56px 48px 72px; max-width: 860px; }
-/* 글 상세만 목차를 오른쪽에 세운다. */
-.app__main--post {
-  display: grid; grid-template-columns: minmax(0, 720px) 190px; gap: 36px;
-  padding: 44px 48px 72px; max-width: none;
+/* max-width 는 테두리 기준이라, 읽는 폭을 그대로 지키려면 좌우 여백을 더해 준다. */
+.app__main, .site-footer {
+  width: 100%; max-width: calc(var(--read) + 56px);
+  margin: 0 auto; padding-left: 28px; padding-right: 28px;
 }
-.app__main--post > main { min-width: 0; }
+.app__main { padding-top: 64px; padding-bottom: 88px; }
 
-@media (max-width: 1100px) {
-  .app__main--post { grid-template-columns: minmax(0, 1fr); }
+/* 글 상세는 본문을 가운데에 세운 채 목차만 오른쪽 여백에 매단다.
+   왼쪽에 같은 폭의 빈 칸을 둬야 본문이 화면 정중앙에 온다. */
+.app__main--post {
+  max-width: calc(var(--toc-w) * 2 + var(--gutter) * 2 + var(--read) + 56px);
+  display: grid; justify-content: center;
+  grid-template-columns: var(--toc-w) minmax(0, var(--read)) var(--toc-w);
+  column-gap: var(--gutter);
+  padding-top: 52px;
+}
+.app__main--post > main { grid-column: 2; min-width: 0; }
+.app__main--post > .toc { grid-column: 3; }
+
+/* 본문 폭이 늘어난 만큼 칸이 접히는 지점도 같이 올린다. */
+@media (max-width: 1460px) {
+  .app__main--post {
+    max-width: calc(var(--toc-w) + var(--gutter) + var(--read) + 56px);
+    grid-template-columns: minmax(0, var(--read)) var(--toc-w);
+  }
+  .app__main--post > main { grid-column: 1; }
+  .app__main--post > .toc { grid-column: 2; }
+}
+@media (max-width: 1200px) {
+  .app__main--post {
+    max-width: calc(var(--read) + 56px);
+    grid-template-columns: minmax(0, 1fr);
+  }
   .app__main--post > .toc { display: none; }
 }
 
@@ -137,17 +201,17 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .post-title {
   margin: 0 0 18px;
-  font-family: var(--font-serif); font-size: 36px; line-height: 1.4;
-  font-weight: 600; letter-spacing: -0.015em; text-wrap: pretty;
+  font-family: var(--font-serif); font-size: 40px; line-height: 1.35;
+  font-weight: 600; letter-spacing: -0.02em; text-wrap: pretty;
 }
 .post-lead {
   margin: 0 0 44px;
-  font-family: var(--font-serif); font-size: 19px; line-height: 1.75;
+  font-family: var(--font-serif); font-size: 20px; line-height: 1.75;
   letter-spacing: 0; color: var(--ink-2); text-wrap: pretty;
 }
 
 /* ── prose ──────────────────────────────────────────────── */
-.prose { font-size: 18px; line-height: 1.85; }
+.prose { font-size: 19px; line-height: 1.85; }
 
 /* 리셋을 먼저 두고 간격을 뒤에 준다.
    :where() 로 명시도를 0 으로 낮춰야 아래 owl 셀렉터가 이긴다. */
@@ -306,8 +370,8 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 /* ── table of contents ──────────────────────────────────── */
 .toc {
   justify-self: start; align-self: start;
-  position: sticky; top: 92px;
-  width: var(--toc-w); padding-left: 28px;
+  position: sticky; top: 52px;
+  width: 100%; max-height: calc(100vh - 84px); overflow-y: auto;
   display: flex; flex-direction: column; gap: 9px;
 }
 .toc__label {
@@ -347,56 +411,28 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 @media (max-width: 640px) { .post-nav { flex-direction: column; } }
 
-/* ── index: 시안 1b 의 사이드바 + 본문 두 칸 ────────────── */
-.app {
-  max-width: 1180px; margin: 0 auto;
-  display: grid; grid-template-columns: 252px minmax(0, 1fr); align-items: start;
+/* ── 홈 목록 ────────────────────────────────────────────── */
+/* 예전에는 프로젝트 필터가 왼쪽 사이드바에 있었다. 사이드바를 걷어내면서
+   필터는 목록 바로 위 한 줄로 옮겼다. */
+.filter-bar {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  margin-bottom: 22px;
 }
-.rail {
-  position: sticky; top: 56px; align-self: start;
-  height: calc(100vh - 56px); overflow-y: auto;
-  padding: 28px 22px; display: flex; flex-direction: column; gap: 30px;
-  background: var(--surface); border-right: 0.5px solid var(--rule);
+.filter-bar button {
+  display: inline-flex; align-items: baseline; gap: 7px;
+  padding: 5px 13px; cursor: pointer; font: inherit;
+  font-size: 13.5px; letter-spacing: -0.015em; color: var(--ink-2);
+  background: none; border: 0.5px solid var(--rule); border-radius: 100px;
+  transition: color 140ms, border-color 140ms;
 }
-.rail__me { display: flex; flex-direction: column; gap: 3px; color: var(--ink); }
-.rail__me:hover { text-decoration: none; }
-.rail__me b { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; }
-.rail__me span {
-  font-family: var(--font-mono); font-size: 11px;
-  letter-spacing: 0.06em; color: var(--ink-3);
+.filter-bar button:hover { color: var(--ink); border-color: var(--ink-3); }
+.filter-bar button b {
+  font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; color: var(--ink-3);
 }
-.rail__nav { display: flex; flex-direction: column; gap: 2px; }
-.rail__nav a {
-  display: flex; align-items: center; justify-content: space-between;
-  height: 34px; padding: 0 10px; border-radius: 7px;
-  font-size: 14px; color: var(--ink-2);
+.filter-bar button[aria-pressed="true"] {
+  color: var(--clay-text); border-color: var(--clay); background: var(--clay-soft);
 }
-.rail__nav a:hover { background: var(--sunk); color: var(--ink); text-decoration: none; }
-.rail__nav a[aria-current] { background: var(--sunk); color: var(--ink); font-weight: 600; }
-.rail__nav a span:last-child { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-3); }
-
-.rail__group { display: flex; flex-direction: column; gap: 2px; }
-.rail__label {
-  margin: 0 0 6px; font-family: var(--font-mono);
-  font-size: 10.5px; font-weight: 500; letter-spacing: 0.12em; color: var(--ink-3);
-}
-.rail__group a {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  height: 30px; padding: 0 10px;
-  font-size: 13.5px; border-radius: 7px; color: var(--ink-2);
-  transition: background 140ms, color 140ms;
-}
-.rail__group a:hover { background: var(--sunk); color: var(--ink); text-decoration: none; }
-.rail__group a b {
-  flex: none; font-family: var(--font-mono);
-  font-size: 11.5px; font-weight: 500; color: var(--ink-3);
-}
-.rail__group a[aria-current] { background: var(--clay-soft); color: var(--clay-text); font-weight: 600; }
-.rail__group a[aria-current] b { color: var(--clay-text); }
-
-.rail__links { margin-top: auto; display: flex; flex-direction: column; gap: 7px; font-size: 13px; }
-.rail__links a { color: var(--ink-2); }
-.rail__links a:hover { color: var(--ink); text-decoration: none; }
+.filter-bar button[aria-pressed="true"] b { color: var(--clay-text); }
 
 .app__head {
   display: flex; align-items: baseline; justify-content: space-between;
@@ -416,11 +452,17 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .home-note { margin: 0; font-size: 15px; line-height: 1.7; color: var(--ink-3); }
 
-.post-list { display: flex; flex-direction: column; border-top: 0.5px solid var(--rule); }
+/* 칩과 타일이 전부 둥근 화면이라 목록만 각지면 튄다. 행을 좌우로 14px 씩
+   내밀어 놓고 그 안에서 둥글게 칠하면, 글자는 본문 선에 그대로 맞는다. */
+.post-list {
+  display: flex; flex-direction: column;
+  margin: 0 -14px; border-top: 0.5px solid var(--rule);
+}
 .post-row {
   display: grid; grid-template-columns: minmax(0, 1fr) 130px; gap: 24px; align-items: start;
-  padding: 18px 12px 18px 0; border-bottom: 0.5px solid var(--rule-soft);
-  color: var(--ink);
+  padding: 18px 14px; border-bottom: 0.5px solid var(--rule-soft);
+  border-radius: var(--radius-lg); color: var(--ink);
+  transition: background 140ms;
 }
 .post-row:hover { background: var(--sunk); text-decoration: none; }
 /* display 를 직접 지정했으므로 브라우저 기본 [hidden] 규칙이 밀린다. */
@@ -450,7 +492,8 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   background: radial-gradient(680px 300px at 8% 0%, var(--clay-soft), transparent 70%);
 }
 .hero__inner {
-  max-width: none; padding: 48px 48px 36px;
+  width: 100%; max-width: calc(var(--read) + 56px); margin: 0 auto;
+  padding: 56px 28px 40px;
   display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: end;
 }
 .hero__inner--single { grid-template-columns: 1fr; }
@@ -476,14 +519,6 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .logo--sm { width: auto; min-width: 26px; height: 26px; padding: 0 5px; border-radius: 6px; }
 .logo--sm img { width: auto; max-width: 60px; height: 16px; }
 
-.links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.links a {
-  display: inline-flex; align-items: center; height: 34px; padding: 0 16px;
-  font-size: 13.5px; color: var(--ink-2);
-  border: 0.5px solid var(--rule); border-radius: 100px;
-}
-.links a:first-child { color: var(--clay-text); border-color: var(--clay); }
-.links a:hover { color: var(--ink); text-decoration: none; }
 
 /* ── 섹션 머리 ──────────────────────────────────────────── */
 .section { margin-top: 48px; }
@@ -628,17 +663,11 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .edu__note { margin: 0; font-size: 13px; color: var(--ink-3); }
 
 @media (max-width: 900px) {
-  .app { grid-template-columns: minmax(0, 1fr); }
-  .rail {
-    position: static; height: auto; overflow: visible;
-    flex-direction: row; flex-wrap: wrap; align-items: center; gap: 14px;
-    padding: 16px 20px; border-right: 0; border-bottom: 0.5px solid var(--rule);
-  }
-  .rail__nav, .rail__group { flex-direction: row; flex-wrap: wrap; }
-  .rail__group { align-items: center; }
-  .rail__label { display: none; }
-  .rail__links { margin-top: 0; flex-direction: row; gap: 14px; }
-  .app__main { padding: 36px 20px 64px; }
+  /* 레일이 아래 가운데로 내려오므로 왼쪽 여백은 돌려주고 아래를 비운다. */
+  .app { padding-left: 0; }
+  .app__main, .site-footer, .hero__inner { padding-left: 20px; padding-right: 20px; }
+  .app__main { padding-top: 40px; padding-bottom: 64px; }
+  .site-footer { padding-bottom: 84px; }
   .post-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .post-row__rail { flex-direction: row; align-items: baseline; gap: 10px; }
 }

@@ -9,7 +9,9 @@ const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
 const order = ["케이톡", "레인보우TV", "아주이벤트", "메일상자", "아올다 클라우드", "선착순예매", "공통", "회고"];
 const counts = new Map<string, number>();
 posts.forEach((p) => counts.set(p.data.project, (counts.get(p.data.project) ?? 0) + 1));
-const projects = order.filter((p) => counts.has(p));
+const projects = order
+  .filter((p) => counts.has(p))
+  .map((p) => ({ name: p, count: counts.get(p)! }));
 
 const fmt = (d: Date) =>
   d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
@@ -26,6 +28,15 @@ const fmt = (d: Date) =>
     <div class="app__head">
       <h2>글</h2>
       <span class="tnum" id="list-count">{posts.length}편</span>
+    </div>
+
+    <div class="filter-bar" role="group" aria-label="프로젝트로 거르기">
+      <button type="button" data-filter="all" aria-pressed="true">전체 <b class="tnum">{posts.length}</b></button>
+      {projects.map((p) => (
+        <button type="button" data-filter={p.name} aria-pressed="false">
+          {p.name} <b class="tnum">{p.count}</b>
+        </button>
+      ))}
     </div>
 
     <div class="post-list">
@@ -46,9 +57,9 @@ const fmt = (d: Date) =>
 </BaseLayout>
 
 <script>
-  // 사이드바의 프로젝트 링크는 어느 페이지에서나 /?project=X 로 간다.
+  // 아카이브의 프로젝트 타일은 /?project=X 로 넘어온다.
   // 홈에서는 이동 대신 그 자리에서 거른다.
-  const links = [...document.querySelectorAll<HTMLAnchorElement>(".rail__group [data-filter]")];
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>(".filter-bar [data-filter]")];
   const rows = [...document.querySelectorAll<HTMLElement>(".post-row")];
   const countEl = document.getElementById("list-count");
 
@@ -58,14 +69,15 @@ const fmt = (d: Date) =>
       row.hidden = !match;
       return match;
     });
-    links.forEach((a) => a.toggleAttribute("aria-current", a.dataset.filter === key));
+    buttons.forEach((b) =>
+      b.setAttribute("aria-pressed", String(b.dataset.filter === key))
+    );
     if (countEl) countEl.textContent = `${visible.length}편`;
   }
 
-  links.forEach((a) =>
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      const key = a.dataset.filter!;
+  buttons.forEach((b) =>
+    b.addEventListener("click", () => {
+      const key = b.dataset.filter!;
       history.replaceState(null, "", key === "all" ? "/" : `/?project=${encodeURIComponent(key)}`);
       apply(key);
     })
