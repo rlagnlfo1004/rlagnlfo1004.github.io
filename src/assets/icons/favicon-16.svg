@@ -1,0 +1,12 @@
+<!-- 16px 폴백 전용. 받은 favicon-32.svg 를 그대로 절반으로 줄이면 막대가 x=2.5, 9.5 처럼
+     픽셀 경계를 반 칸 벗어나 회색으로 번집니다. 그래서 16 격자 위에 직접 그렸습니다.
+     모든 좌표와 크기가 정수라 16px 로 구우면 획이 정확히 1px 로 떨어집니다.
+     막대 5개는 이 크기에서 서로 붙어버려 원본 뜻대로 4개로 줄였습니다. rx 는 뺐습니다 -
+     폭이 1px 이라 둥글릴 자리가 없고, 넣으면 획만 흐려집니다. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <rect width="16" height="16" fill="#FBFBF9"></rect>
+  <rect fill="#101317" x="3"  y="8" width="1" height="4"></rect>
+  <rect fill="#101317" x="6"  y="6" width="1" height="6"></rect>
+  <rect fill="#3182F6" x="9"  y="4" width="1" height="8"></rect>
+  <rect fill="#101317" x="12" y="8" width="1" height="4"></rect>
+</svg>

@@ -1,0 +1,26 @@
+<!-- 파비콘 링크는 테마별로 갈아끼울 수가 없어서, 받은 -light / -dark 두 벌의 색을
+     한 파일에 미디어 쿼리로 넣었습니다. 여기서 말하는 테마는 사이트 토글이 아니라
+     운영체제 설정입니다. 탭 막대를 칠하는 주체가 그쪽이라 그게 맞습니다.
+
+     좌표와 크기를 전부 짝수로 잡았습니다. 브라우저는 이 그림을 16 CSS 픽셀로 그리는데
+     레티나에서는 그게 32 디바이스 픽셀이라, 64 격자가 반으로 줄어도 획이 정수로
+     떨어져야 합니다. 원본은 x 가 19, 41 이라 9.5, 20.5 가 되면서 번졌습니다.
+     그 김에 여백도 6/6, 14/14 로 맞췄습니다 - 원본은 좌우가 10/6 으로 치우쳐 있었습니다. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <style>
+    .bg { fill: #FBFBF9 }
+    .t  { fill: #101317 }
+    .a  { fill: #3182F6 }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #101317 }
+      .t  { fill: #FBFBF9 }
+      .a  { fill: #4593FC }
+    }
+  </style>
+  <rect class="bg" width="64" height="64"></rect>
+  <rect class="t" x="6"  y="36" width="4" height="14" rx="1"></rect>
+  <rect class="t" x="18" y="26" width="4" height="24" rx="1"></rect>
+  <rect class="t" x="30" y="36" width="4" height="14" rx="1"></rect>
+  <rect class="a" x="42" y="14" width="4" height="36" rx="1"></rect>
+  <rect class="t" x="54" y="36" width="4" height="14" rx="1"></rect>
+</svg>

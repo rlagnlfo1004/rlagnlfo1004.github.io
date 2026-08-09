@@ -1,0 +1,9 @@
+<!-- 라이트 전용 판. 색만 다르고 도형은 public/favicon.svg 와 같습니다. PNG 굽는 원본입니다. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" fill="#FBFBF9"></rect>
+  <rect fill="#101317" x="6"  y="36" width="4" height="14" rx="1"></rect>
+  <rect fill="#101317" x="18" y="26" width="4" height="24" rx="1"></rect>
+  <rect fill="#101317" x="30" y="36" width="4" height="14" rx="1"></rect>
+  <rect fill="#3182F6" x="42" y="14" width="4" height="36" rx="1"></rect>
+  <rect fill="#101317" x="54" y="36" width="4" height="14" rx="1"></rect>
+</svg>

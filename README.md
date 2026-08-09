@@ -48,6 +48,43 @@ src/
 └── styles/           스타일
 ```
 
+## 제목과 공유 이미지
+
+사이트 이름과 한 줄 설명은 `src/consts.ts` 한 곳에 있습니다. 탭 제목은 여기 값 뒤에
+페이지 이름을 붙여 만들기 때문에, 페이지에서는 `title="아카이브"` 처럼 페이지 이름만 넘깁니다.
+
+파비콘은 `public/favicon.svg` 가 원본입니다. 라이트와 다크 색을 한 파일에
+`prefers-color-scheme` 로 넣어뒀습니다 — 파비콘 링크는 테마별로 갈아끼울 수가 없습니다.
+색만 따로 필요하면 `src/assets/icons/favicon-light.svg`, `favicon-dark.svg` 를 보면 됩니다.
+
+16px 에서는 막대 5개가 서로 붙어 뭉개지므로 4개로 줄인 `src/assets/icons/favicon-16.svg`
+를 씁니다.
+
+**도형을 고칠 때 좌표를 정수로 유지해야 합니다.** 64 격자 판은 좌표와 크기가 모두
+짝수여야 하고(브라우저가 16 CSS 픽셀로 그리는데 레티나에서는 32 디바이스 픽셀이라
+반으로 줄어듭니다), 16 격자 판은 정수여야 합니다. 반 칸 어긋나면 획이 회색으로 번집니다.
+
+PNG 폴백은 여기서 굽습니다.
+
+```bash
+node -e '
+const sharp = require("sharp"), fs = require("fs");
+const light = fs.readFileSync("src/assets/icons/favicon-light.svg");
+const small = fs.readFileSync("src/assets/icons/favicon-16.svg");
+sharp(small, { density: 512 }).resize(16, 16).png().toFile("public/favicon-16.png");
+sharp(light, { density: 512 }).resize(32, 32).png().toFile("public/favicon-32.png");
+sharp(light, { density: 512 }).resize(180, 180).png().toFile("public/apple-touch-icon.png");
+'
+```
+
+링크 미리보기 이미지는 `src/assets/og.html` 이 원본입니다. 고친 뒤 다시 굽습니다.
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+  --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 \
+  --virtual-time-budget=6000 --screenshot=public/og.png src/assets/og.html
+```
+
 ## 단축키
 
 `D` 키로 다크 모드와 라이트 모드를 전환합니다.

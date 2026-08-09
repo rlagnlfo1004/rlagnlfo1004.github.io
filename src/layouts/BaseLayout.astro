@@ -1,27 +1,60 @@
 ---
 import "../styles/global.css";
+import { SITE_TITLE, SITE_DESCRIPTION, OG_IMAGE } from "../consts";
 
 interface Props {
-  title: string;
+  /** 페이지 이름만 넘깁니다. 사이트 이름은 여기서 뒤에 붙입니다. 홈은 비워둡니다. */
+  title?: string;
   description?: string;
   progress?: boolean;
   /** 도크에서 현재 위치를 표시할 때 씁니다. */
   here?: "posts" | "archive" | "about";
+  /** 글 페이지는 og:type 을 article 로 바꿉니다. */
+  article?: boolean;
 }
 const {
   title,
-  description = "문제를 정의하고 서비스로 증명해온 기록. 정답이 하나가 아닌 자리에서 고른 이유와 버린 이유를 직접 잰 숫자와 함께 적습니다.",
+  description = SITE_DESCRIPTION,
   progress = false,
   here = "posts",
+  article = false,
 } = Astro.props;
+
+const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(OG_IMAGE, Astro.site);
 ---
 <!doctype html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
+    <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {/* SVG 를 먼저 두고, 못 읽는 브라우저만 PNG 로 떨어지게 합니다.
+        16px 은 막대 5개가 뭉개져서 4개로 줄인 판을 씁니다. */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    {/* 링크를 붙였을 때 뜨는 미리보기 */}
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={SITE_TITLE} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
