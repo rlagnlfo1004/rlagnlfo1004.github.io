@@ -107,6 +107,7 @@ const stack = [
 ];
 ---
 <BaseLayout
+  here="about"
   title="소개 · 김휘래 개발 기록"
   description="정답이 없는 자리에서 트레이드오프를 따져 결정하고, 그 결정을 실제 사용자에게 검증해왔습니다."
 >
@@ -134,8 +135,7 @@ const stack = [
     </div>
   </section>
 
-  <div class="shell" style="--measure: 800px">
-    <main id="content">
+  <main id="content" class="app__main">
       <section class="section">
         <div class="section__head"><h2>경력</h2><span>{career.period}</span></div>
 
@@ -243,6 +243,5 @@ const stack = [
           <p class="edu__note">4.5 만점 기준, 119학점 이수 (전공 70학점).</p>
         </div>
       </section>
-    </main>
-  </div>
+  </main>
 </BaseLayout>

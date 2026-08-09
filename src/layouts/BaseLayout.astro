@@ -1,16 +1,29 @@
 ---
+import { getCollection } from "astro:content";
 import "../styles/global.css";
 
 interface Props {
   title: string;
   description?: string;
   progress?: boolean;
+  /** 사이드바에서 현재 위치를 표시할 때 씁니다. */
+  here?: "posts" | "archive" | "about";
 }
 const {
   title,
   description = "문제를 정의하고 서비스로 증명해온 기록. 정답이 하나가 아닌 자리에서 고른 이유와 버린 이유를 직접 잰 숫자와 함께 적습니다.",
   progress = false,
+  here = "posts",
 } = Astro.props;
+
+// 사이드바는 모든 페이지에 같은 모양으로 서기 때문에 여기서 한 번만 센다.
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+const order = ["케이톡", "레인보우TV", "아주이벤트", "메일상자", "아올다 클라우드", "공통", "회고"];
+const counts = new Map<string, number>();
+posts.forEach((p) => counts.set(p.data.project, (counts.get(p.data.project) ?? 0) + 1));
+const projects = order
+  .filter((p) => counts.has(p))
+  .map((p) => ({ name: p, count: counts.get(p)! }));
 ---
 <!doctype html>
 <html lang="ko">
@@ -45,28 +58,55 @@ const {
 
   <body>
     <a class="skip-link" href="#content">본문으로 건너뛰기</a>
+    {progress && <div class="read-progress"><i id="read-progress"></i></div>}
 
-    <header class="site-header">
-      <div class="site-header__inner">
-        <a class="site-title" href="/">김휘래</a>
-        <nav class="site-nav">
-          <a href="/">글</a>
-          <a href="/archive/">아카이브</a>
-          <a href="/about/">소개</a>
-          <a href="https://github.com/rlagnlfo1004" rel="me noopener">GitHub</a>
+    <div class="app">
+      <aside class="rail">
+        <a class="rail__me" href="/">
+          <b>김휘래</b>
+          <span>SERVER ENGINEER</span>
+        </a>
+
+        <nav class="rail__nav" aria-label="사이트">
+          <a href="/" aria-current={here === "posts" ? "page" : undefined}>
+            <span>글</span><span class="tnum">{posts.length}</span>
+          </a>
+          <a href="/archive/" aria-current={here === "archive" ? "page" : undefined}>
+            <span>아카이브</span>
+          </a>
+          <a href="/about/" aria-current={here === "about" ? "page" : undefined}>
+            <span>소개</span>
+          </a>
+        </nav>
+
+        <div class="rail__group" role="group" aria-label="프로젝트">
+          <p class="rail__label">PROJECTS</p>
+          <a href="/" data-filter="all"><span>전체</span><b class="tnum">{posts.length}</b></a>
+          {projects.map((p) => (
+            <a href={`/?project=${encodeURIComponent(p.name)}`} data-filter={p.name}>
+              <span>{p.name}</span><b class="tnum">{p.count}</b>
+            </a>
+          ))}
+        </div>
+
+        <div class="rail__links">
+          <a href="https://github.com/rlagnlfo1004" rel="me noopener">GitHub ↗</a>
+          <a href="https://rlagnlfo1004.tistory.com" rel="noopener">Tistory ↗</a>
+          <a href="mailto:hramst0618@gmail.com">이메일 ↗</a>
           <button class="theme-toggle" id="theme-toggle" type="button" aria-label="테마 전환">
             테마 <kbd>D</kbd>
           </button>
-        </nav>
+        </div>
+      </aside>
+
+      <div class="app__body">
+        <slot />
+
+        <footer class="site-footer">
+          고른 이유와 버린 이유를 같이 적습니다.
+        </footer>
       </div>
-      {progress && <div class="read-progress"><i id="read-progress"></i></div>}
-    </header>
-
-    <slot />
-
-    <footer class="site-footer">
-      고른 이유와 버린 이유를 같이 적습니다.
-    </footer>
+    </div>
 
     <script>
       const root = document.documentElement;

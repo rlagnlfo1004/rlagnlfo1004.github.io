@@ -14,97 +14,62 @@ const projects = order.filter((p) => counts.has(p));
 const fmt = (d: Date) =>
   d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
 ---
-<BaseLayout title="김휘래 개발 기록">
-  <div class="app">
-    <aside class="rail">
-      <a class="rail__me" href="/">
-        <b>김휘래</b>
-        <span>SERVER ENGINEER</span>
-      </a>
+<BaseLayout title="김휘래 개발 기록" here="posts">
+  <main id="content" class="app__main">
+    <p class="eyebrow">MEASURED, NOT ASSUMED</p>
+    <h1 class="home-title">문제를 정의하고 서비스로 증명해왔습니다</h1>
+    <p class="home-lead">
+      정답이 하나가 아닌 자리에서 무엇을 고르고 무엇을 버렸는지, 그 근거를 직접 잰 숫자와 함께 적습니다.
+      글에 나오는 코드는 실제 저장소의 코드입니다.
+    </p>
 
-      <nav class="rail__nav" aria-label="사이트">
-        <a href="/" aria-current="page"><span>글</span><span class="tnum">{posts.length}</span></a>
-        <a href="/archive/"><span>아카이브</span></a>
-        <a href="/about/"><span>소개</span></a>
-      </nav>
+    <div class="app__head">
+      <h2>글</h2>
+      <span class="tnum" id="list-count">{posts.length}편</span>
+    </div>
 
-      <div class="rail__group" role="group" aria-label="프로젝트 필터">
-        <p class="rail__label">PROJECTS</p>
-        <button type="button" data-filter="all" aria-pressed="true">
-          <span>전체</span><b class="tnum">{posts.length}</b>
-        </button>
-        {projects.map((p) => (
-          <button type="button" data-filter={p} aria-pressed="false">
-            <span>{p}</span><b class="tnum">{counts.get(p)}</b>
-          </button>
-        ))}
-      </div>
-
-      <div class="rail__links">
-        <a href="https://github.com/rlagnlfo1004" rel="me noopener">GitHub ↗</a>
-        <a href="https://rlagnlfo1004.tistory.com" rel="noopener">Tistory ↗</a>
-        <a href="mailto:hramst0618@gmail.com">이메일 ↗</a>
-      </div>
-    </aside>
-
-    <main id="content" class="app__main">
-      <p class="eyebrow">MEASURED, NOT ASSUMED</p>
-      <h1 class="home-title">문제를 정의하고 서비스로 증명해왔습니다</h1>
-      <p class="home-lead">
-        정답이 하나가 아닌 자리에서 무엇을 고르고 무엇을 버렸는지, 그 근거를 직접 잰 숫자와 함께 적습니다.
-        글에 나오는 코드는 실제 저장소의 코드입니다.
-      </p>
-
-      <div class="app__head">
-        <h2>글</h2>
-        <span class="tnum" id="list-count">{posts.length}편</span>
-      </div>
-
-      <div class="post-list">
-        {posts.map((post) => (
-          <a class="post-row" href={`/posts/${post.id}/`} data-project={post.data.project}>
-            <div>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
-            </div>
-            <div class="post-row__rail">
-              <b>{post.data.project}</b>
-              <time class="tnum" datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
-            </div>
-          </a>
-        ))}
-      </div>
-    </main>
-  </div>
+    <div class="post-list">
+      {posts.map((post) => (
+        <a class="post-row" href={`/posts/${post.id}/`} data-project={post.data.project}>
+          <div>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.description}</p>
+          </div>
+          <div class="post-row__rail">
+            <b>{post.data.project}</b>
+            <time class="tnum" datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
 </BaseLayout>
 
 <script>
-  const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-filter]")];
+  // 사이드바의 프로젝트 링크는 어느 페이지에서나 /?project=X 로 간다.
+  // 홈에서는 이동 대신 그 자리에서 거른다.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>(".rail__group [data-filter]")];
   const rows = [...document.querySelectorAll<HTMLElement>(".post-row")];
   const countEl = document.getElementById("list-count");
 
-  function applyFilter(key: string) {
+  function apply(key: string) {
     const visible = rows.filter((row) => {
       const match = key === "all" || row.dataset.project === key;
       row.hidden = !match;
-      // :last-child 는 숨은 행까지 세므로 마지막으로 "보이는" 행을 직접 표시한다.
-      row.classList.remove("is-last");
       return match;
     });
-    visible.at(-1)?.classList.add("is-last");
+    links.forEach((a) => a.toggleAttribute("aria-current", a.dataset.filter === key));
     if (countEl) countEl.textContent = `${visible.length}편`;
   }
 
-  function select(key: string) {
-    const btn = buttons.find((b) => b.dataset.filter === key);
-    if (!btn) return;
-    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-    applyFilter(key);
-  }
+  links.forEach((a) =>
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const key = a.dataset.filter!;
+      history.replaceState(null, "", key === "all" ? "/" : `/?project=${encodeURIComponent(key)}`);
+      apply(key);
+    })
+  );
 
-  buttons.forEach((btn) => btn.addEventListener("click", () => select(btn.dataset.filter!)));
-
-  // 아카이브의 프로젝트 타일이 /?project=케이톡 로 넘어온다.
-  const wanted = new URLSearchParams(location.search).get("project");
-  if (wanted) select(wanted);
+  apply(new URLSearchParams(location.search).get("project") ?? "all");
 </script>

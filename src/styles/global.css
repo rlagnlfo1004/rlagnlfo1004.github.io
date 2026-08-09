@@ -85,29 +85,16 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .skip-link:focus { left: 16px; z-index: 100; }
 
 /* ── site chrome ────────────────────────────────────────── */
-.site-header {
-  position: sticky; top: 0; z-index: 40;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: saturate(1.4) blur(8px);
-  border-bottom: 0.5px solid var(--rule);
+.read-progress {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  height: 2px; background: transparent;
 }
-.site-header__inner {
-  max-width: 1180px; margin: 0 auto; padding: 0 28px;
-  height: 56px; display: flex; align-items: center;
-  justify-content: space-between; gap: 24px; white-space: nowrap;
-}
-.site-title {
-  font-family: var(--font-serif); font-size: 17px; font-weight: 600;
-  letter-spacing: 0; color: var(--ink);
-}
-.site-nav { display: flex; align-items: center; gap: 22px; font-size: 14px; }
-.site-nav a { color: var(--ink-2); }
-.site-nav a:hover { color: var(--ink); text-decoration: none; }
+.read-progress > i { display: block; height: 2px; width: 0; background: var(--clay); }
 
 .theme-toggle {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
   height: 28px; padding: 0 9px; cursor: pointer;
-  background: none; border: 0.5px solid var(--rule); border-radius: var(--radius);
+  background: none; border: 0.5px solid var(--rule); border-radius: 7px;
   color: var(--ink-3); font: inherit; font-size: 12px;
   transition: color 140ms, border-color 140ms;
 }
@@ -117,32 +104,26 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   color: var(--ink-2); background: none; border: 0;
 }
 
-.read-progress { height: 2px; background: var(--rule-soft); }
-.read-progress > i { display: block; height: 2px; width: 0; background: var(--clay); }
-
 .site-footer {
-  border-top: 0.5px solid var(--rule); margin-top: 96px;
-  padding: 32px 28px; text-align: center;
-  font-size: 14px; color: var(--ink-3);
+  margin-top: auto;
+  border-top: 0.5px solid var(--rule);
+  padding: 28px 48px; font-size: 13.5px; color: var(--ink-3);
 }
 
-/* ── article shell: centred column + right-pinned TOC ───── */
-.shell {
-  display: grid;
-  grid-template-columns: 1fr minmax(0, var(--measure)) 1fr;
-  padding: 56px 28px 64px;
-  max-width: 1180px; margin: 0 auto;
+/* ── 본문 칸 ────────────────────────────────────────────── */
+.app__body { min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
+.app__main { padding: 56px 48px 72px; max-width: 860px; }
+/* 글 상세만 목차를 오른쪽에 세운다. */
+.app__main--post {
+  display: grid; grid-template-columns: minmax(0, 720px) 190px; gap: 36px;
+  padding: 44px 48px 72px; max-width: none;
 }
-.shell > main { grid-column: 2; min-width: 0; }
-.shell > .toc { grid-column: 3; }
+.app__main--post > main { min-width: 0; }
 
-@media (max-width: 1120px) {
-  .shell { grid-template-columns: minmax(0, 1fr); }
-  .shell > main, .shell > .toc { grid-column: 1; }
-  .shell > .toc { display: none; }
+@media (max-width: 1100px) {
+  .app__main--post { grid-template-columns: minmax(0, 1fr); }
+  .app__main--post > .toc { display: none; }
 }
-
-.hero + .shell { padding-top: 28px; }
 
 /* ── post meta + title ──────────────────────────────────── */
 .post-meta {
@@ -369,7 +350,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 /* ── index: 시안 1b 의 사이드바 + 본문 두 칸 ────────────── */
 .app {
   max-width: 1180px; margin: 0 auto;
-  display: grid; grid-template-columns: 252px minmax(0, 1fr);
+  display: grid; grid-template-columns: 252px minmax(0, 1fr); align-items: start;
 }
 .rail {
   position: sticky; top: 56px; align-self: start;
@@ -399,26 +380,24 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   margin: 0 0 6px; font-family: var(--font-mono);
   font-size: 10.5px; font-weight: 500; letter-spacing: 0.12em; color: var(--ink-3);
 }
-.rail__group button {
+.rail__group a {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  height: 30px; padding: 0 10px; cursor: pointer;
-  font: inherit; font-size: 13.5px; text-align: left;
-  border: 0; border-radius: 7px; background: none; color: var(--ink-2);
+  height: 30px; padding: 0 10px;
+  font-size: 13.5px; border-radius: 7px; color: var(--ink-2);
   transition: background 140ms, color 140ms;
 }
-.rail__group button:hover { background: var(--sunk); color: var(--ink); }
-.rail__group button b {
+.rail__group a:hover { background: var(--sunk); color: var(--ink); text-decoration: none; }
+.rail__group a b {
   flex: none; font-family: var(--font-mono);
   font-size: 11.5px; font-weight: 500; color: var(--ink-3);
 }
-.rail__group button[aria-pressed="true"] { background: var(--clay-soft); color: var(--clay-text); font-weight: 600; }
-.rail__group button[aria-pressed="true"] b { color: var(--clay-text); }
+.rail__group a[aria-current] { background: var(--clay-soft); color: var(--clay-text); font-weight: 600; }
+.rail__group a[aria-current] b { color: var(--clay-text); }
 
 .rail__links { margin-top: auto; display: flex; flex-direction: column; gap: 7px; font-size: 13px; }
 .rail__links a { color: var(--ink-2); }
 .rail__links a:hover { color: var(--ink); text-decoration: none; }
 
-.app__main { padding: 56px 48px 72px; max-width: 860px; }
 .app__head {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 16px; margin-bottom: 14px;
@@ -471,7 +450,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   background: radial-gradient(680px 300px at 8% 0%, var(--clay-soft), transparent 70%);
 }
 .hero__inner {
-  max-width: 1180px; margin: 0 auto; padding: 52px 28px 40px;
+  max-width: none; padding: 48px 48px 36px;
   display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: end;
 }
 .hero__inner--single { grid-template-columns: 1fr; }

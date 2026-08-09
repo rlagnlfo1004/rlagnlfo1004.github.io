@@ -26,11 +26,11 @@ const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))].sort((a,
 const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" });
 ---
 <BaseLayout
+  here="archive"
   title="아카이브 · 김휘래 개발 기록"
   description={`프로젝트 ${projects.length}개, 태그 ${tags.length}개, 글 ${posts.length}편을 한곳에 모았습니다.`}
 >
-  <div class="shell" style="--measure: 800px">
-    <main id="content">
+  <main id="content" class="app__main">
       <h1 class="page-title">아카이브</h1>
       <p class="page-lead">
         프로젝트 {projects.length}개, 태그 {tags.length}개, 글 {posts.length}편.
@@ -72,13 +72,13 @@ const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { month: "2-digit", day: 
                     data-project={post.data.project}
                     data-tags={post.data.tags.join("|")}
                   >
-                    <div class="post-row__rail">
-                      <time class="tnum" datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
-                      <b>{post.data.project}</b>
-                    </div>
                     <div>
                       <h3><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
                       <p>{post.data.description}</p>
+                    </div>
+                    <div class="post-row__rail">
+                      <b>{post.data.project}</b>
+                      <time class="tnum" datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
                     </div>
                   </article>
                 ))}
@@ -86,8 +86,7 @@ const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { month: "2-digit", day: 
           </div>
         ))}
       </section>
-    </main>
-  </div>
+  </main>
 </BaseLayout>
 
 <script>
