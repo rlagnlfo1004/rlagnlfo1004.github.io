@@ -34,47 +34,39 @@ ALTER TABLE member ADD COLUMN point INT NOT NULL DEFAULT 0;
     </marker>
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">거래 한 건이 남기는 행들</text>
-
   <rect x="0" y="34" width="205" height="88" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="14" y="54" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">payment_record</text>
   <text x="14" y="72" font-size="10.5" fill="var(--ink-3, #9A958B)">결제/환불 멱등의 정본</text>
   <text x="14" y="89" font-size="10.5" fill="var(--ink-2, #63605A)">멱등키 (UK) · 실결제 금액</text>
   <text x="14" y="106" font-size="10.5" fill="var(--ink-2, #63605A)">플랫폼 · 원 충전 키</text>
-
   <rect x="250" y="34" width="250" height="88" rx="7" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="264" y="54" font-size="11" font-weight="700" fill="var(--clay, #BF5F3B)" font-family="var(--font-mono)">point_transaction</text>
   <text x="264" y="72" font-size="10.5" fill="var(--ink-3, #9A958B)">원장 헤더 · 거래 한 건</text>
   <text x="264" y="89" font-size="10.5" fill="var(--ink-2, #63605A)">변동량 · 직후 잔액 스냅샷</text>
   <text x="264" y="106" font-size="10.5" fill="var(--ink-2, #63605A)">사유·닉네임·식별자 스냅샷</text>
-
   <rect x="540" y="34" width="180" height="88" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="554" y="54" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">PTR</text>
   <text x="554" y="72" font-size="10.5" fill="var(--ink-3, #9A958B)">상세 사유</text>
   <text x="554" y="89" font-size="10.5" fill="var(--ink-2, #63605A)">영상대화 · AI 파트너</text>
   <text x="554" y="106" font-size="10.5" fill="var(--ink-2, #63605A)">사용자 노출용 활동명</text>
-
   <rect x="250" y="176" width="250" height="88" rx="7" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="264" y="196" font-size="11" font-weight="700" fill="var(--clay, #BF5F3B)" font-family="var(--font-mono)">..._detail</text>
   <text x="264" y="214" font-size="10.5" fill="var(--ink-3, #9A958B)">lot 명세 · 어느 덩어리에서 얼마</text>
   <text x="264" y="231" font-size="10.5" fill="var(--ink-2, #63605A)">root = 지급 / child = 소진</text>
   <text x="264" y="248" font-size="10.5" fill="var(--ink-2, #63605A)">유료·무료 · 만료일 · 단가</text>
-
   <rect x="540" y="176" width="180" height="88" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="554" y="196" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">TR</text>
   <text x="554" y="214" font-size="10.5" fill="var(--ink-3, #9A958B)">상위 분류</text>
   <text x="554" y="231" font-size="10.5" fill="var(--ink-2, #63605A)">charge · deduct · refund</text>
   <text x="554" y="248" font-size="10.5" fill="var(--ink-2, #63605A)">어드민 필터 기준</text>
-
   <line x1="206" y1="72" x2="244" y2="72" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-led)"/>
   <line x1="244" y1="88" x2="206" y2="88" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-led)"/>
   <text x="225" y="112" font-size="9.5" text-anchor="middle" fill="var(--ink-3, #9A958B)">상호</text>
-
   <line x1="501" y1="80" x2="534" y2="80" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-led)"/>
   <line x1="375" y1="122" x2="375" y2="170" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-led)"/>
   <text x="386" y="150" font-size="10" fill="var(--ink-3, #9A958B)">1 : N</text>
   <line x1="630" y1="122" x2="630" y2="170" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-led)"/>
   <text x="641" y="150" font-size="10" fill="var(--ink-3, #9A958B)">N : 1</text>
-
   <line x1="0" y1="286" x2="720" y2="286" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="0" y="304" font-size="11" fill="var(--ink-3, #9A958B)">어느 행도 UPDATE 하지 않는다. 소진도 취소도 새 행을 덧붙여 표현한다.</text>
   <text x="0" y="322" font-size="11" fill="var(--ink-3, #9A958B)">회원 테이블로 향하는 FK 가 없다. 회원이 삭제돼도 원장은 5 년간 그대로 남는다.</text>

@@ -75,34 +75,28 @@ Apple 환불 주석이 이 설계의 요점을 잘 보여줍니다. 웹훅이 �
     </marker>
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">같은 결제가 두 경로로 들어와도 지급은 한 번</text>
-
   <rect x="40" y="30" width="250" height="34" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="165" y="51" font-size="11.5" text-anchor="middle" fill="var(--ink-2, #63605A)">앱 → 충전 API</text>
   <rect x="430" y="30" width="250" height="34" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="555" y="51" font-size="11.5" text-anchor="middle" fill="var(--ink-2, #63605A)">스토어 → 웹훅</text>
   <line x1="165" y1="66" x2="165" y2="86" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-idem)"/>
   <line x1="555" y1="66" x2="555" y2="86" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-idem)"/>
-
   <rect x="40" y="88" width="640" height="44" rx="7" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="58" y="108" font-size="11.5" font-weight="700" fill="var(--clay, #BF5F3B)">1겹 · 결정적 멱등키</text>
   <text x="58" y="124" font-size="11" fill="var(--ink-3, #9A958B)">두 경로가 스토어 식별자로 같은 키를 만든다</text>
   <text x="662" y="118" font-size="10.5" text-anchor="end" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">ktalk:google:charge:{orderId}</text>
-
   <rect x="40" y="144" width="640" height="44" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="58" y="164" font-size="11.5" font-weight="700" fill="var(--ink-2, #63605A)">2겹 · 서비스 DB 유니크 제약</text>
   <text x="58" y="180" font-size="11" fill="var(--ink-3, #9A958B)">주문 원본을 두 번 만들지 못하게 한다</text>
   <text x="662" y="174" font-size="10.5" text-anchor="end" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">oh_idempotency_key</text>
-
   <rect x="40" y="200" width="640" height="44" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="58" y="220" font-size="11.5" font-weight="700" fill="var(--ink-2, #63605A)">3겹 · 회원 행 비관적 락</text>
   <text x="58" y="236" font-size="11" fill="var(--ink-3, #9A958B)">같은 회원의 동시 요청을 줄 세워 레이스를 없앤다</text>
   <text x="662" y="230" font-size="10.5" text-anchor="end" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">SELECT ... FOR UPDATE</text>
-
   <rect x="40" y="256" width="640" height="44" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="58" y="276" font-size="11.5" font-weight="700" fill="var(--ink-2, #63605A)">4겹 · 원장 유니크 제약</text>
   <text x="58" y="292" font-size="11" fill="var(--ink-3, #9A958B)">앞이 다 뚫려도 원장에는 한 번만 쓰인다</text>
   <text x="662" y="286" font-size="10.5" text-anchor="end" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">pmr_idempotency_key</text>
-
   <line x1="360" y1="302" x2="360" y2="320" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-idem)"/>
   <text x="360" y="342" font-size="14" font-weight="700" text-anchor="middle" fill="var(--clay, #BF5F3B)">포인트 지급 1회</text>
   <text x="360" y="360" font-size="11" text-anchor="middle" fill="var(--ink-3, #9A958B)">진 쪽은 기존 결과를 그대로 돌려받는다</text>

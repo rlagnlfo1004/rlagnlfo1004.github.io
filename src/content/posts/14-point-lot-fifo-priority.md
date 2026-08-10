@@ -133,60 +133,49 @@ static List<AvailableLot> availableLotsByPriority(
     </marker>
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">300P 를 차감할 때 어느 lot 부터 태우는가</text>
-
   <text x="0" y="38" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">적립된 순서 (root idx)</text>
   <text x="380" y="38" font-size="11.5" font-weight="700" fill="var(--clay, #BF5F3B)">실제 소진 순서 (우선순위)</text>
-
   <rect x="0" y="48" width="300" height="38" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="14" y="72" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)">#101</text>
   <text x="58" y="72" font-size="11" fill="var(--ink-3, #9A958B)">PAID</text>
   <text x="108" y="72" font-size="11" fill="var(--ink-2, #63605A)">500P</text>
   <text x="286" y="72" font-size="11" text-anchor="end" fill="var(--ink-3, #9A958B)">2031-03-01</text>
-
   <rect x="0" y="94" width="300" height="38" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="14" y="118" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)">#102</text>
   <text x="58" y="118" font-size="11" fill="var(--ink-3, #9A958B)">FREE</text>
   <text x="108" y="118" font-size="11" fill="var(--ink-2, #63605A)">100P</text>
   <text x="286" y="118" font-size="11" text-anchor="end" fill="var(--ink-3, #9A958B)">2026-09-01</text>
-
   <rect x="0" y="140" width="300" height="38" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="14" y="164" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)">#103</text>
   <text x="58" y="164" font-size="11" fill="var(--ink-3, #9A958B)">PAID</text>
   <text x="108" y="164" font-size="11" fill="var(--ink-2, #63605A)">300P</text>
   <text x="286" y="164" font-size="11" text-anchor="end" fill="var(--ink-3, #9A958B)">2030-06-01</text>
-
   <rect x="0" y="186" width="300" height="38" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="14" y="210" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)">#104</text>
   <text x="58" y="210" font-size="11" fill="var(--ink-3, #9A958B)">FREE</text>
   <text x="108" y="210" font-size="11" fill="var(--ink-2, #63605A)">200P</text>
   <text x="286" y="210" font-size="11" text-anchor="end" fill="var(--ink-3, #9A958B)">2027-01-15</text>
-
   <line x1="316" y1="136" x2="366" y2="136" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-lot)"/>
-
   <rect x="380" y="48" width="340" height="38" rx="6" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="394" y="72" font-size="11" font-weight="700" fill="var(--clay, #BF5F3B)">#102</text>
   <text x="438" y="72" font-size="11" fill="var(--clay, #BF5F3B)">FREE</text>
   <text x="488" y="72" font-size="11" fill="var(--ink-2, #63605A)">100P</text>
   <text x="706" y="72" font-size="11" text-anchor="end" fill="var(--clay, #BF5F3B)">전량 소진 · 잔여 200P</text>
-
   <rect x="380" y="94" width="340" height="38" rx="6" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="394" y="118" font-size="11" font-weight="700" fill="var(--clay, #BF5F3B)">#104</text>
   <text x="438" y="118" font-size="11" fill="var(--clay, #BF5F3B)">FREE</text>
   <text x="488" y="118" font-size="11" fill="var(--ink-2, #63605A)">200P</text>
   <text x="706" y="118" font-size="11" text-anchor="end" fill="var(--clay, #BF5F3B)">전량 소진 · 잔여 0P</text>
-
   <rect x="380" y="140" width="340" height="38" rx="6" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1" stroke-dasharray="4 3"/>
   <text x="394" y="164" font-size="11" font-weight="700" fill="var(--ink-3, #9A958B)">#103</text>
   <text x="438" y="164" font-size="11" fill="var(--ink-3, #9A958B)">PAID</text>
   <text x="488" y="164" font-size="11" fill="var(--ink-3, #9A958B)">300P</text>
   <text x="706" y="164" font-size="11" text-anchor="end" fill="var(--ink-3, #9A958B)">건드리지 않음</text>
-
   <rect x="380" y="186" width="340" height="38" rx="6" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1" stroke-dasharray="4 3"/>
   <text x="394" y="210" font-size="11" font-weight="700" fill="var(--ink-3, #9A958B)">#101</text>
   <text x="438" y="210" font-size="11" fill="var(--ink-3, #9A958B)">PAID</text>
   <text x="488" y="210" font-size="11" fill="var(--ink-3, #9A958B)">500P</text>
   <text x="706" y="210" font-size="11" text-anchor="end" fill="var(--ink-3, #9A958B)">건드리지 않음</text>
-
   <line x1="0" y1="244" x2="720" y2="244" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="0" y="262" font-size="11" fill="var(--ink-3, #9A958B)">순수 FIFO 였다면 #101 유료 500P 부터 깎이고, 2026-09-01 에 만료될 무료 100P 가 그대로 소멸했을 것이다.</text>
   <text x="0" y="280" font-size="11" fill="var(--ink-3, #9A958B)">차감 결과는 원장에 child 행 두 개(#102 에 -100, #104 에 -200)로 남는다.</text>

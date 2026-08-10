@@ -137,47 +137,35 @@ static <T> Specification<T> unrestricted() {
       <path d="M0 1 L7 4 L0 7 z" fill="var(--clay, #BF5F3B)"/>
     </marker>
   </defs>
-
   <text x="0" y="14" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">null 하나가 두 가지를 뜻하고 있었다</text>
-
   <!-- LEFT : 3.5 -->
   <text x="0" y="44" font-size="12.5" font-weight="700" fill="var(--ink-2, #63605A)">spring-data-jpa 3.5</text>
   <rect x="0" y="56" width="346" height="110" rx="8" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1" stroke-dasharray="4 3"/>
-
   <rect x="16" y="74" width="146" height="30" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="28" y="94" font-size="11.5" fill="var(--ink-2, #63605A)">참조가 null</text>
   <rect x="16" y="116" width="146" height="30" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="28" y="136" font-size="11.5" fill="var(--ink-2, #63605A)">toPredicate 가 null</text>
-
   <rect x="208" y="95" width="122" height="30" rx="5" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="220" y="115" font-size="11.5" font-weight="700" fill="var(--ink, #221F1B)">조건 없음</text>
-
   <path d="M162 89 L202 106" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p19-arrow)"/>
   <path d="M162 131 L202 114" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p19-arrow)"/>
-
   <text x="0" y="190" font-size="12.5" font-weight="700" fill="var(--ink, #221F1B)">둘이 같은 결과로 수렴한다</text>
   <text x="0" y="212" font-size="11.5" fill="var(--ink-3, #9A958B)">실수로 넘긴 null 과 의도한 null 을 구분할 수 없다</text>
-
   <!-- RIGHT : 4.0 -->
   <text x="374" y="44" font-size="12.5" font-weight="700" fill="var(--clay, #BF5F3B)">spring-data-jpa 4.0</text>
   <rect x="374" y="56" width="346" height="110" rx="8" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
-
   <rect x="390" y="74" width="146" height="30" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="402" y="94" font-size="11.5" fill="var(--ink-2, #63605A)">참조가 null</text>
   <rect x="390" y="116" width="146" height="30" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="402" y="136" font-size="11.5" fill="var(--ink-2, #63605A)">unrestricted()</text>
-
   <rect x="582" y="74" width="122" height="30" rx="5" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="0.8" stroke-dasharray="3 3"/>
   <text x="594" y="94" font-size="11.5" font-weight="700" fill="var(--clay, #BF5F3B)">막힘  ·  IAE</text>
   <rect x="582" y="116" width="122" height="30" rx="5" fill="var(--surface, #fff)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="594" y="136" font-size="11.5" font-weight="700" fill="var(--ink, #221F1B)">조건 없음</text>
-
   <path d="M536 89 L576 89" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="0.9" stroke-dasharray="3 3" marker-end="url(#p19-arrow-clay)"/>
   <path d="M536 131 L576 131" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="0.9" marker-end="url(#p19-arrow)"/>
-
   <text x="374" y="190" font-size="12.5" font-weight="700" fill="var(--ink, #221F1B)">경로가 둘로 갈라진다</text>
   <text x="374" y="212" font-size="11.5" fill="var(--ink-3, #9A958B)">조건 없음은 unrestricted() 만 담당한다</text>
-
   <line x1="0" y1="240" x2="720" y2="240" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="0" y="258" font-size="11.5" font-weight="700" fill="var(--ink-3, #9A958B)">실측  ·  3.5.0, 3.5.4, 4.0.4, 4.1.0 네 버전에 같은 코드를 실행  ·  JDK 17 과 21</text>
   <text x="0" y="278" font-size="11.5" fill="var(--ink-3, #9A958B)">IAE 는 IllegalArgumentException  ·  참조 누적 시드를 null 로 두면 버전과 무관하게 NPE</text>

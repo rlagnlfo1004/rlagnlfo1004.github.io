@@ -151,11 +151,9 @@ k를 키우면 순위 차이가 더 무의미해지고 "여러 목록에 등장�
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">두 목록에 모두 있는 문서가 위로 올라온다</text>
   <text x="0" y="32" font-size="11.5" fill="var(--clay, #BF5F3B)" font-family="var(--font-mono)">score = Σ weight / (k + rank),   k = 60</text>
-
   <text x="0" y="58" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)">벡터 검색 · w 0.6</text>
   <text x="240" y="58" font-size="11" font-weight="700" fill="var(--ink-2, #63605A)">어휘 검색 · w 0.4</text>
   <text x="480" y="58" font-size="11" font-weight="700" fill="var(--clay, #BF5F3B)">RRF 융합 결과</text>
-
   <rect x="0" y="66" width="200" height="28" rx="5" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="14" y="85" font-size="11" fill="var(--clay, #BF5F3B)">1위   메일 A</text>
   <rect x="0" y="100" width="200" height="28" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
@@ -164,16 +162,13 @@ k를 키우면 순위 차이가 더 무의미해지고 "여러 목록에 등장�
   <text x="14" y="153" font-size="11" fill="var(--clay, #BF5F3B)">3위   메일 C</text>
   <rect x="0" y="168" width="200" height="28" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="14" y="187" font-size="11" fill="var(--ink-2, #63605A)">4위   메일 D</text>
-
   <rect x="240" y="66" width="200" height="28" rx="5" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="254" y="85" font-size="11" fill="var(--clay, #BF5F3B)">1위   메일 C</text>
   <rect x="240" y="100" width="200" height="28" rx="5" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="254" y="119" font-size="11" fill="var(--clay, #BF5F3B)">2위   메일 A</text>
   <rect x="240" y="134" width="200" height="28" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="254" y="153" font-size="11" fill="var(--ink-2, #63605A)">3위   메일 E</text>
-
   <line x1="446" y1="130" x2="474" y2="130" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-rrf)"/>
-
   <rect x="480" y="66" width="240" height="28" rx="5" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="494" y="85" font-size="11" font-weight="700" fill="var(--clay, #BF5F3B)">메일 A</text>
   <text x="706" y="85" font-size="10.5" text-anchor="end" fill="var(--ink-3, #9A958B)" font-family="var(--font-mono)">.0098 + .0065 = .0163</text>
@@ -189,7 +184,6 @@ k를 키우면 순위 차이가 더 무의미해지고 "여러 목록에 등장�
   <rect x="480" y="202" width="240" height="28" rx="5" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="494" y="221" font-size="11" fill="var(--ink-2, #63605A)">메일 E</text>
   <text x="706" y="221" font-size="10.5" text-anchor="end" fill="var(--ink-3, #9A958B)" font-family="var(--font-mono)">.0063</text>
-
   <line x1="0" y1="250" x2="720" y2="250" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="0" y="268" font-size="11" fill="var(--ink-3, #9A958B)">벡터에서 2위였던 B 보다, 양쪽 상위권인 C 가 앞선다. k=60 이 상위권 격차를 눌러 준 결과다.</text>
   <text x="0" y="286" font-size="11" fill="var(--ink-3, #9A958B)">원 점수(ts_rank_cd, 코사인 유사도)는 쓰지 않는다. 스케일이 달라 더할 수 없기 때문이다.</text>

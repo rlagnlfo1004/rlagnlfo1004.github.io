@@ -68,32 +68,24 @@ B-tree 인덱스는 **정렬된 자료구조**입니다. 사전과 같아요. "�
     </marker>
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">메일 한 통이 검색 가능해지기까지</text>
-
   <rect x="0" y="26" width="720" height="46" rx="7" fill="var(--sunk, #F1EDE3)" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="16" y="45" font-size="10.5" font-weight="700" fill="var(--ink-3, #9A958B)">1 · 원문</text>
   <text x="16" y="63" font-size="12" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">"계약서를 검토 부탁드립니다"</text>
-
   <line x1="360" y1="72" x2="360" y2="88" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-fts)"/>
-
   <rect x="0" y="90" width="720" height="60" rx="7" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="16" y="109" font-size="10.5" font-weight="700" fill="var(--clay, #BF5F3B)">2 · 형태소 분석 (mecab-ko + mecab-ko-dic)</text>
   <text x="16" y="127" font-size="12" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">계약서 / 를 / 검토 / 부탁 / 드리 / ㅂ니다</text>
   <text x="16" y="143" font-size="10.5" fill="var(--ink-3, #9A958B)">조사·어미를 떼어내고 어근만 남긴다. 사전 기반이라 신조어는 못 쪼갠다.</text>
-
   <line x1="360" y1="150" x2="360" y2="166" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-fts)"/>
-
   <rect x="0" y="168" width="720" height="60" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="16" y="187" font-size="10.5" font-weight="700" fill="var(--ink-2, #63605A)">3 · tsvector — 어휘소와 위치</text>
   <text x="16" y="205" font-size="12" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">'계약서':1 '검토':3 '부탁':4</text>
   <text x="16" y="221" font-size="10.5" fill="var(--ink-3, #9A958B)">중복은 합치고 위치를 함께 담는다. 위치가 있어야 구문 검색과 근접도 랭킹이 된다.</text>
-
   <line x1="360" y1="228" x2="360" y2="244" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-fts)"/>
-
   <rect x="0" y="246" width="720" height="66" rx="7" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="16" y="265" font-size="10.5" font-weight="700" fill="var(--clay, #BF5F3B)">4 · GIN 역색인 — 단어에서 문서로</text>
   <text x="16" y="284" font-size="12" fill="var(--ink-2, #63605A)" font-family="var(--font-mono)">계약서 → {12, 87, 203}    검토 → {12, 45}</text>
   <text x="16" y="303" font-size="10.5" fill="var(--ink-3, #9A958B)">검색은 목록 하나를 꺼내는 일이 된다. 전체 문서 수와 무관해진다.</text>
-
   <text x="0" y="332" font-size="11" fill="var(--ink-3, #9A958B)">2~4 단계는 INSERT/UPDATE 트리거가 자동으로 수행한다. 애플리케이션은 원문만 저장한다.</text>
 </svg>
 
@@ -284,31 +276,24 @@ EXISTS (
     </marker>
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">한 검색어가 두 색인을 동시에 두드린다</text>
-
   <rect x="250" y="26" width="220" height="30" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="360" y="45" font-size="11.5" text-anchor="middle" fill="var(--ink-2, #63605A)">검색어</text>
-
   <path d="M300 56 L300 74 Q300 84 285 84 L180 84" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-two)"/>
   <path d="M420 56 L420 74 Q420 84 435 84 L540 84" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-two)"/>
-
   <rect x="0" y="94" width="340" height="86" rx="7" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="16" y="114" font-size="11.5" font-weight="700" fill="var(--clay, #BF5F3B)">형태소 경로 · search_vector</text>
   <text x="16" y="133" font-size="10.5" fill="var(--ink-2, #63605A)">조사·어미를 뗀 어근 단위로 매칭한다</text>
   <text x="16" y="150" font-size="10.5" fill="var(--ink-2, #63605A)">"계약서를" 로 색인돼도 "계약서" 로 찾힌다</text>
   <text x="16" y="169" font-size="10.5" fill="var(--ink-3, #9A958B)">약점 — 단어 중간, 사전에 없는 말</text>
-
   <rect x="380" y="94" width="340" height="86" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="396" y="114" font-size="11.5" font-weight="700" fill="var(--ink-2, #63605A)">트라이그램 경로 · search_text</text>
   <text x="396" y="133" font-size="10.5" fill="var(--ink-2, #63605A)">3 글자씩 쪼개 부분 문자열을 매칭한다</text>
   <text x="396" y="150" font-size="10.5" fill="var(--ink-2, #63605A)">"invoice" 안의 "voice" 도 찾힌다</text>
   <text x="396" y="169" font-size="10.5" fill="var(--ink-3, #9A958B)">약점 — 인덱스가 크고, 2 글자 이하는 못 탄다</text>
-
   <path d="M170 180 L170 200 Q170 210 185 210 L330 210" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-two)"/>
   <path d="M550 180 L550 200 Q550 210 535 210 L390 210" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-two)"/>
-
   <rect x="250" y="222" width="220" height="30" rx="6" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="360" y="241" font-size="11.5" font-weight="700" text-anchor="middle" fill="var(--clay, #BF5F3B)">OR — 합집합</text>
-
   <text x="0" y="266" font-size="11" fill="var(--ink-3, #9A958B)">서로의 사각지대를 덮는다. 대가는 색인 두 벌과 그만큼의 쓰기·저장 비용이다.</text>
 </svg>
 

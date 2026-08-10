@@ -48,6 +48,33 @@ src/
 └── styles/           스타일
 ```
 
+## 본문에 다이어그램 넣기
+
+`<svg class="diagram">` 을 마크다운 본문에 그대로 씁니다. 인라인이어야 `var(--clay)` 같은
+테마 토큰을 상속받아 다크 모드에서 같이 뒤집힙니다.
+
+**SVG 안에 빈 줄을 넣으면 안 됩니다.** 마크다운은 빈 줄에서 HTML 블록을 끊기 때문에,
+빈 줄 아래의 도형들이 `<svg>` 밖으로 밀려나 `<p>` 안의 텍스트로 렌더링됩니다. 제목 한 줄만
+보이고 그림이 사라지는데, 빌드는 에러 없이 통과하니 눈으로 봐야만 발견됩니다. 구획을 나누려면
+빈 줄 대신 `<!-- 주석 -->` 을 쓰세요.
+
+빌드 뒤 원본과 결과의 도형 개수가 같은지 확인하면 확실합니다.
+
+```bash
+python3 - <<'PY'
+import glob, re, os
+for p in sorted(glob.glob('src/content/posts/*.md')):
+    src = open(p, encoding='utf-8').read()
+    for m in re.finditer(r'<svg class="diagram".*?</svg>', src, re.S):
+        slug = os.path.basename(p)[:-3]
+        dist = open(f'dist/posts/{slug}/index.html', encoding='utf-8').read()
+        n_src = len(re.findall(r'<(text|rect|path|line|marker)\b', m.group(0)))
+        n_dist = sum(len(re.findall(r'<(text|rect|path|line|marker)\b', d))
+                     for d in re.findall(r'<svg class="diagram".*?</svg>', dist, re.S))
+        print(('OK  ' if n_src <= n_dist else 'FAIL'), slug, n_src, n_dist)
+PY
+```
+
 ## 제목과 공유 이미지
 
 사이트 이름과 한 줄 설명은 `src/consts.ts` 한 곳에 있습니다. 탭 제목은 여기 값 뒤에

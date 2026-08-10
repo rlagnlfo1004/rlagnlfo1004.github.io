@@ -31,7 +31,6 @@ tags: ["웹훅", "결제", "RTDN", "App Store Server Notification", "Spring"]
     </marker>
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">앱이 결제 직후 죽은 경우</text>
-
   <rect x="15" y="26" width="130" height="30" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="80" y="45" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink-2, #63605A)">앱</text>
   <rect x="200" y="26" width="130" height="30" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
@@ -40,39 +39,29 @@ tags: ["웹훅", "결제", "RTDN", "App Store Server Notification", "Spring"]
   <text x="455" y="45" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink-2, #63605A)">케이톡 서버</text>
   <rect x="575" y="26" width="130" height="30" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="640" y="45" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink-2, #63605A)">공통 지갑</text>
-
   <line x1="80" y1="56" x2="80" y2="132" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <line x1="80" y1="152" x2="80" y2="344" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1" stroke-dasharray="3 4"/>
   <line x1="265" y1="56" x2="265" y2="344" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <line x1="455" y1="56" x2="455" y2="344" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <line x1="640" y1="56" x2="640" y2="344" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
-
   <line x1="80" y1="80" x2="259" y2="80" stroke="var(--ink-2, #63605A)" stroke-width="1" marker-end="url(#ar-wh)"/>
   <text x="170" y="74" font-size="11" text-anchor="middle" fill="var(--ink-2, #63605A)">결제 요청</text>
-
   <line x1="265" y1="110" x2="86" y2="110" stroke="var(--ink-2, #63605A)" stroke-width="1" marker-end="url(#ar-wh)"/>
   <text x="170" y="104" font-size="11" text-anchor="middle" fill="var(--ink-2, #63605A)">결제 완료 · 영수증</text>
-
   <line x1="70" y1="132" x2="90" y2="152" stroke="var(--clay, #BF5F3B)" stroke-width="1.6"/>
   <line x1="90" y1="132" x2="70" y2="152" stroke="var(--clay, #BF5F3B)" stroke-width="1.6"/>
   <text x="103" y="147" font-size="11" font-weight="700" fill="var(--clay, #BF5F3B)">앱 크래시</text>
   <text x="103" y="163" font-size="10.5" fill="var(--ink-3, #9A958B)">충전 API 를 못 부른다</text>
-
   <line x1="265" y1="196" x2="449" y2="196" stroke="var(--clay, #BF5F3B)" stroke-width="1.2" marker-end="url(#ar-wh)"/>
   <text x="357" y="190" font-size="11" font-weight="600" text-anchor="middle" fill="var(--clay, #BF5F3B)">웹훅 (RTDN / ASSN)</text>
-
   <line x1="455" y1="226" x2="271" y2="226" stroke="var(--ink-2, #63605A)" stroke-width="1" marker-end="url(#ar-wh)"/>
   <text x="357" y="220" font-size="11" text-anchor="middle" fill="var(--ink-2, #63605A)">영수증 재조회</text>
-
   <line x1="265" y1="256" x2="449" y2="256" stroke="var(--ink-2, #63605A)" stroke-width="1" marker-end="url(#ar-wh)"/>
   <text x="357" y="250" font-size="11" text-anchor="middle" fill="var(--ink-2, #63605A)">구매 확정 · 계정 식별자</text>
-
   <line x1="455" y1="290" x2="634" y2="290" stroke="var(--ink-2, #63605A)" stroke-width="1" marker-end="url(#ar-wh)"/>
   <text x="547" y="284" font-size="11" text-anchor="middle" fill="var(--ink-2, #63605A)">충전 (멱등키 동봉)</text>
-
   <line x1="640" y1="320" x2="461" y2="320" stroke="var(--ink-2, #63605A)" stroke-width="1" marker-end="url(#ar-wh)"/>
   <text x="547" y="314" font-size="11" text-anchor="middle" fill="var(--ink-2, #63605A)">지급 완료</text>
-
   <line x1="0" y1="352" x2="720" y2="352" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="0" y="368" font-size="11" fill="var(--ink-3, #9A958B)">앱이 사라진 뒤에도 지급이 완료된다. 앱이 나중에 다시 켜져 충전 API 를 불러도 같은 멱등키라 중복 지급되지 않는다.</text>
 </svg>
@@ -262,22 +251,18 @@ public void recoverUnreflectedCharges() {
 
 <svg class="diagram" viewBox="0 0 720 252" role="img" aria-label="지급을 보장하는 세 개의 경로">
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">지급을 보장하는 세 경로와 각자가 메우는 구멍</text>
-
   <rect x="0" y="30" width="720" height="60" rx="7" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="18" y="52" font-size="12" font-weight="700" fill="var(--clay, #BF5F3B)">1 · 앱 → 충전 API</text>
   <text x="18" y="70" font-size="11" fill="var(--ink-2, #63605A)">정상 흐름. 즉시 지급되고 사용자가 바로 잔액을 본다.</text>
   <text x="18" y="84" font-size="11" fill="var(--ink-3, #9A958B)">못 메우는 구멍 — 결제 직후 앱이 죽으면 호출 자체가 없다</text>
-
   <rect x="0" y="102" width="720" height="60" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="18" y="124" font-size="12" font-weight="700" fill="var(--ink-2, #63605A)">2 · 스토어 웹훅</text>
   <text x="18" y="142" font-size="11" fill="var(--ink-2, #63605A)">앱이 사라져도 스토어가 알려준다. 재조회로 사실을 확인한 뒤 지급한다.</text>
   <text x="18" y="156" font-size="11" fill="var(--ink-3, #9A958B)">못 메우는 구멍 — 계정 식별자가 없으면 회원을 특정하지 못한다</text>
-
   <rect x="0" y="174" width="720" height="60" rx="7" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="18" y="196" font-size="12" font-weight="700" fill="var(--ink-2, #63605A)">3 · 미반영 결제 복구 스케줄러</text>
   <text x="18" y="214" font-size="11" fill="var(--ink-2, #63605A)">주문은 있는데 원장에 안 들어간 건을 주기 스캔해 같은 멱등키로 재호출한다.</text>
   <text x="18" y="228" font-size="11" fill="var(--ink-3, #9A958B)">못 메우는 구멍 — 주문 자체가 안 만들어졌으면 스캔 대상이 아니다</text>
-
   <text x="0" y="250" font-size="11" fill="var(--ink-3, #9A958B)">세 경로 모두 같은 멱등키를 쓴다. 그래서 몇 번을 겹쳐 시도해도 지급은 한 번이다.</text>
 </svg>
 

@@ -29,40 +29,33 @@ tags: ["MSA", "아키텍처", "분산 트랜잭션", "Spring", "JWT"]
     </marker>
   </defs>
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">클라이언트는 공통 서버를 모른다</text>
-
   <rect x="40" y="28" width="240" height="30" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="160" y="47" font-size="11.5" text-anchor="middle" fill="var(--ink-2, #63605A)">케이톡 앱</text>
   <rect x="440" y="28" width="240" height="30" rx="6" fill="var(--sunk, #F1EDE3)" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="0.5"/>
   <text x="560" y="47" font-size="11.5" text-anchor="middle" fill="var(--ink-2, #63605A)">코리안쌤 앱</text>
-
   <line x1="160" y1="58" x2="160" y2="84" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-msa)"/>
   <line x1="560" y1="58" x2="560" y2="84" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-msa)"/>
-
   <rect x="20" y="88" width="280" height="96" rx="8" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="38" y="110" font-size="12" font-weight="700" fill="var(--clay, #BF5F3B)">케이톡 서버</text>
   <text x="38" y="130" font-size="11" fill="var(--ink-2, #63605A)">영수증 검증 · 상품 · 결제 원본</text>
   <text x="38" y="147" font-size="11" fill="var(--ink-2, #63605A)">과금 정책 · 스토어 웹훅 수신</text>
   <rect x="38" y="156" width="244" height="20" rx="4" fill="var(--sunk, #F1EDE3)"/>
   <text x="48" y="170" font-size="10.5" fill="var(--ink-3, #9A958B)">케이톡 DB (서비스 단독 소유)</text>
-
   <rect x="420" y="88" width="280" height="96" rx="8" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="438" y="110" font-size="12" font-weight="700" fill="var(--ink-2, #63605A)">코리안쌤 서버</text>
   <text x="438" y="130" font-size="11" fill="var(--ink-2, #63605A)">자기 도메인 · 자기 정책</text>
   <text x="438" y="147" font-size="11" fill="var(--ink-2, #63605A)">같은 계약으로 지갑을 부른다</text>
   <rect x="438" y="156" width="244" height="20" rx="4" fill="var(--sunk, #F1EDE3)"/>
   <text x="448" y="170" font-size="10.5" fill="var(--ink-3, #9A958B)">코리안쌤 DB (서비스 단독 소유)</text>
-
   <path d="M160 184 L160 214 Q160 224 175 224 L330 224" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-msa)"/>
   <path d="M560 184 L560 214 Q560 224 545 224 L390 224" fill="none" stroke="var(--ink-3, #9A958B)" stroke-width="1" marker-end="url(#ar-msa)"/>
   <text x="360" y="215" font-size="10.5" text-anchor="middle" fill="var(--ink-3, #9A958B)">HTTP · X-Service-Auth</text>
-
   <rect x="130" y="240" width="460" height="98" rx="8" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="150" y="262" font-size="12" font-weight="700" fill="var(--clay, #BF5F3B)">공통 플랫폼 서버</text>
   <text x="150" y="282" font-size="11" fill="var(--ink-2, #63605A)">인증 · 회원 · 계정 연동</text>
   <text x="150" y="299" font-size="11" fill="var(--ink-2, #63605A)">포인트 원장 · 결제 기록 (재화의 정본)</text>
   <rect x="150" y="308" width="420" height="20" rx="4" fill="var(--sunk, #F1EDE3)"/>
   <text x="160" y="322" font-size="10.5" fill="var(--ink-3, #9A958B)">통합 DB · 서비스 서버만 접근한다</text>
-
   <line x1="0" y1="352" x2="720" y2="352" stroke="var(--rule-soft, rgba(34,31,27,.07))" stroke-width="0.5"/>
   <text x="0" y="368" font-size="11" fill="var(--ink-3, #9A958B)">DB 사이에 FK 가 없다. 서비스 DB 의 mb_no 는 통합 DB 를 가리키는 논리 참조일 뿐이다.</text>
 </svg>
@@ -203,25 +196,21 @@ public class CommonServerRequestAuth {
 
 <svg class="diagram" viewBox="0 0 720 268" role="img" aria-label="분산 트랜잭션 없이 두 DB 를 맞추는 순서">
   <text x="0" y="12" font-size="13" font-weight="600" fill="var(--ink-2, #63605A)">DB 두 개를 2PC 없이 맞추는 방법</text>
-
   <rect x="0" y="30" width="336" height="86" rx="8" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="18" y="52" font-size="11.5" font-weight="700" fill="var(--ink-2, #63605A)">1 · 케이톡 DB · 주문 커밋</text>
   <text x="18" y="72" font-size="11" fill="var(--ink-2, #63605A)">멱등키와 함께 주문 원본을 먼저 확정한다.</text>
   <text x="18" y="89" font-size="11" fill="var(--ink-2, #63605A)">원장 참조 컬럼은 아직 비어 있다.</text>
   <text x="18" y="106" font-size="10.5" fill="var(--ink-3, #9A958B)">여기서 죽으면 → 3 번이 주워간다</text>
-
   <rect x="384" y="30" width="336" height="86" rx="8" fill="none" stroke="var(--rule, rgba(34,31,27,.11))" stroke-width="1"/>
   <text x="402" y="52" font-size="11.5" font-weight="700" fill="var(--ink-2, #63605A)">2 · 통합 DB · 원장 커밋</text>
   <text x="402" y="72" font-size="11" fill="var(--ink-2, #63605A)">같은 멱등키로 호출한다. 이미 있으면</text>
   <text x="402" y="89" font-size="11" fill="var(--ink-2, #63605A)">기존 결과를 그대로 재생해 돌려준다.</text>
   <text x="402" y="106" font-size="10.5" fill="var(--ink-3, #9A958B)">응답이 유실돼도 → 3 번이 주워간다</text>
-
   <rect x="0" y="134" width="720" height="86" rx="8" fill="none" stroke="var(--clay, #BF5F3B)" stroke-width="1"/>
   <text x="18" y="156" font-size="11.5" font-weight="700" fill="var(--clay, #BF5F3B)">3 · 복구 스케줄러 · 두 DB 를 맞춘다</text>
   <text x="18" y="176" font-size="11" fill="var(--ink-2, #63605A)">원장 참조가 비어 있는 주문을 주기 스캔해 같은 멱등키로 다시 호출한다.</text>
   <text x="18" y="193" font-size="11" fill="var(--ink-2, #63605A)">이미 반영된 건이 섞여도 멱등 재생이라 이중 적립이 없다.</text>
   <text x="18" y="210" font-size="10.5" fill="var(--ink-3, #9A958B)">최종적 일관성 — 잠깐 어긋나지만 반드시 수렴한다</text>
-
   <text x="0" y="244" font-size="11" fill="var(--ink-3, #9A958B)">2PC 를 쓰지 않은 대가: 두 DB 가 어긋나 있는 구간이 존재한다.</text>
   <text x="0" y="262" font-size="11" fill="var(--ink-3, #9A958B)">그 대신 공통 서버 장애가 서비스 서버의 트랜잭션을 잡아두지 않는다.</text>
 </svg>
