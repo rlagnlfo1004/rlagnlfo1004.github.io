@@ -101,6 +101,11 @@ html {
   font-size: max(100%, 16px);
   scroll-behavior: smooth;
   scroll-padding-top: 2rem;
+  /* 모바일 브라우저는 어떤 블록이 화면보다 넓으면 그 블록의 글자만 자동으로 키운다.
+     코드 블록은 width: max-content 로 가로 스크롤되니 항상 화면보다 넓어서, 코드만
+     본문보다 크게 부풀어 보였다(지정값은 14px 로 본문 18px 보다 작다). 자동 확대를 끈다. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
@@ -114,6 +119,13 @@ body {
   letter-spacing: var(--track-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* 한글은 기본 규칙상 음절 아무 데서나 줄이 넘어간다. 그래서 "크레딧 기반 흐 /
+     름 제어까지" 처럼 단어가 두 줄로 쪼개졌다. 목록 설명에서는 줄바꿈 12번 중 8번이
+     그랬다. keep-all 로 띄어쓰기에서만 끊는다.
+     대신 띄어쓰기가 없는 긴 토큰(ThreadPoolTaskExecutor, 긴 URL)은 칸을 넘칠 수
+     있으므로, 그런 것만 예외로 쪼개도록 overflow-wrap 을 함께 둔다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 a { color: var(--clay-text); text-decoration: none; }
@@ -599,8 +611,12 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   font-size: var(--t-h1); line-height: 1.22;
   font-weight: 600; letter-spacing: var(--track-display); text-wrap: pretty;
 }
+/* 60ch 로 묶어 두었더니 715px 에서 멈춰, 바로 아래 목록(820px)보다 105px 앞에서
+   끝났다. 한 화면에 오른쪽 끝이 두 개 생긴다. 리드도 칸을 끝까지 쓰게 한다.
+   820px 에 20px 글자면 한 줄에 한글 40자 정도라 읽는 폭으로도 넓지 않다.
+   글·아카이브·소개의 리드는 원래 폭 제한이 없었으므로 이걸로 셋이 같아진다. */
 .home-lead {
-  margin: 0 0 44px; max-width: 60ch;
+  margin: 0 0 44px;
   font-size: var(--t-lead); line-height: 1.75;
   letter-spacing: var(--track-body); color: var(--ink-2); text-wrap: pretty;
 }
