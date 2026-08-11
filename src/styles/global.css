@@ -19,6 +19,11 @@
   --mark:       #FBEFC4;
   --code-bg:    #F7F8FA;
 
+  /* 재질용. --lip 은 면의 위쪽에 빛이 걸리는 선이고, --cast 는 떠 있는 면이
+     아래로 떨어뜨리는 그림자다. 둘이 있어야 반투명이 "유리"로 읽힌다. */
+  --lip:        rgba(255, 255, 255, 0.65);
+  --cast:       rgba(20, 22, 26, 0.22);
+
   /* 서체는 둘뿐이다. 화면 어디서도 서체 경계가 보이지 않게 글자는 전부 Pretendard 로
      읽고, 보폭이 맞아야 하는 것(코드, 숫자, 라벨)만 mono 로 간다. 예전에는 여기에
      Source Serif 4 와, 토큰에 없이 숨어 있던 Inter 까지 넷이 섞여 있었다. */
@@ -77,6 +82,10 @@
   --clay-soft:  #16243B;
   --mark:       #3D3620;
   --code-bg:    #14171A;
+
+  /* 어두운 바탕에서는 흰 선을 그대로 쓰면 테가 튄다. 많이 낮추고, 그림자는 더 깊게. */
+  --lip:        rgba(255, 255, 255, 0.16);
+  --cast:       rgba(0, 0, 0, 0.6);
 
   color-scheme: dark;
 }
@@ -189,9 +198,22 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 /* ── site chrome ────────────────────────────────────────── */
 .read-progress {
   position: fixed; top: 0; left: 0; right: 0; z-index: 60;
-  height: 2px; background: transparent;
+  height: 3px; background: transparent;
 }
-.read-progress > i { display: block; height: 2px; width: 0; background: var(--clay); }
+.read-progress > i { display: block; height: 3px; width: 0; background: var(--clay); }
+
+/* 화면 맨 위에서 글자가 진행바에 그대로 잘리는 대신 흐려지며 사라지게 한다.
+   구분선을 한 줄 긋는 게 아니라, 떠 있는 UI 와 콘텐츠가 만나는 곳만 페이드로 덮는다.
+   맨 위에 있을 때는 켜지 않는다. 그때는 겹치는 것이 없는데도 글 머리(칩과 날짜)가
+   씻겨 보이기 때문이다. 스크롤이 시작되면 나타난다. */
+.scroll-edge {
+  position: fixed; inset: 0 0 auto 0; z-index: 45;
+  height: 4.5rem; pointer-events: none;
+  background: linear-gradient(to bottom, var(--bg) 20%, transparent);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+:root[data-scrolled] .scroll-edge { opacity: 1; }
 
 /* ── 왼쪽 끝 아이콘 레일 ────────────────────────────────── */
 /* 예전 사이드바는 252px 를 먹으면서도 화면 왼쪽 끝이 아니라 가운데쯤에 떠 있었다.
@@ -221,14 +243,24 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .dock__rule { width: 24px; height: 0.5px; margin: 8px 0; background: var(--rule); }
 
 @media (max-width: 900px) {
-  /* 좁은 화면에서는 왼쪽에 세울 자리가 없어 아래 가운데로 눕힌다. */
+  /* 좁은 화면에서는 왼쪽에 세울 자리가 없어 아래 가운데로 눕힌다.
+     여기가 이 사이트에서 본문이 실제로 UI 아래를 지나가는 유일한 자리다. 그래서
+     불투명한 알약이 아니라 재질로 만든다. 예전에는 blur(8px) 이 걸려 있었지만
+     배경이 92% 불투명이라 흐릴 것이 아무것도 비치지 않았다. 배경을 열고 블러를
+     올리고, 위쪽에 빛이 걸리는 선과 아래로 떨어지는 그림자를 더한다. */
   .dock {
     top: auto; bottom: 12px; left: 50%; height: auto; width: auto;
     transform: translateX(-50%); flex-direction: row; gap: 2px;
-    padding: 5px; border-right: 0; border: 0.5px solid var(--rule);
+    padding: 5px; border-right: 0; border: 0;
     border-radius: 100px;
-    background: color-mix(in srgb, var(--surface) 92%, transparent);
-    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--bg) 58%, transparent);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    /* 테두리를 box-shadow 로 그려 세 겹(테·빛·그림자)을 한 속성에 모은다 */
+    box-shadow:
+      0 0 0 0.5px color-mix(in srgb, var(--ink) 12%, transparent),
+      inset 0 1px 0 var(--lip),
+      0 14px 34px -12px var(--cast);
   }
   .dock__item { width: 56px; padding: 7px 0; gap: 4px; }
   .dock__label { font-size: var(--t-2xs); }
@@ -257,32 +289,38 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .app__main { padding-top: 64px; padding-bottom: 88px; }
 
-/* 글 상세는 본문을 가운데에 세운 채 목차만 오른쪽 여백에 매단다.
-   왼쪽에 같은 폭의 빈 칸을 둬야 본문이 화면 정중앙에 온다. */
+/* 글 상세는 본문을 가운데에 세운 채 목차를 화면 오른쪽 끝에 매단다.
+   폭을 고정해 가운데 정렬하면 목차도 그 상자 안에 갇혀 오른쪽에 빈 땅이 남는다.
+   그래서 폭 제한을 풀고, 남는 공간을 양쪽 빈 칸(1fr)이 나눠 먹게 한다. 두 칸이
+   같은 몫을 받으므로 본문은 화면 정중앙에 서고, 목차는 자기 칸의 오른쪽 끝에
+   붙는다(justify-self: end). 화면이 넓어질수록 목차는 더 오른쪽으로 간다.
+
+   폭이 모자라질 때의 우선순위도 칸의 최소값으로 정해 둔다. 왼쪽 빈 칸은 최소 0
+   이라 먼저 접히고, 목차 칸은 최소 (목차 폭 + 간격)이라 끝까지 폭을 지킨다. 즉
+   좁아지면 본문이 왼쪽으로 밀리다가, 그래도 모자라면 아래 규칙이 목차를 감춘다.
+
+   column-gap 을 쓰지 않고 간격을 목차 칸 안쪽(padding-left)에 넣은 이유가 있다.
+   gap 은 왼쪽 빈 칸과 본문 사이에도 똑같이 붙는데, 그 왼쪽 간격은 아무것도 나누지
+   않으면서 88px 을 먹는다. 그만큼 본문이 일찍 깎이기 시작한다(1330px 부터). */
 .app__main--post {
-  max-width: calc(var(--toc-w) * 2 + var(--gutter) * 2 + var(--read) + 3.5rem);
-  display: grid; justify-content: center;
-  grid-template-columns: var(--toc-w) minmax(0, var(--read)) var(--toc-w);
-  column-gap: var(--gutter);
+  max-width: none;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, var(--read))
+    minmax(calc(var(--toc-w) + var(--gutter)), 1fr);
+  column-gap: 0;
   padding-top: 52px;
 }
 .app__main--post > main { grid-column: 2; min-width: 0; }
 .app__main--post > .toc { grid-column: 3; }
 
-/* 접히는 지점은 손으로 고른 값이 아니라 계산값이다. 한 배치가 본문 폭을 온전히
-   지키려면 화면이 (칸 합 + 좌우 여백 3.5rem + 왼쪽 레일 4.75rem) 만큼은 돼야 한다.
-   3단: 12.5 + 5.5 + 51.25 + 5.5 + 12.5 + 3.5 + 4.75 = 95.5rem = 1528px → 1540px
-   2단: 51.25 + 5.5 + 12.5 + 3.5 + 4.75 = 77.5rem = 1240px → 1260px
-   --gutter 를 건드리면 이 두 값도 다시 계산해야 한다. */
-@media (max-width: 1540px) {
-  .app__main--post {
-    max-width: calc(var(--toc-w) + var(--gutter) + var(--read) + 3.5rem);
-    grid-template-columns: minmax(0, var(--read)) var(--toc-w);
-  }
-  .app__main--post > main { grid-column: 1; }
-  .app__main--post > .toc { grid-column: 2; }
-}
-@media (max-width: 1260px) {
+/* 위 칸들이 알아서 줄어들므로 중간 단계 규칙은 필요 없다. 목차를 감추는 지점만
+   남긴다. 본문 폭이 온전히 유지되는 최소 화면은
+   왼쪽 0 + 본문 51.25 + 간격 5.5 + 목차 12.5 + 좌우 여백 3.5 + 레일 4.75
+   = 77.5rem = 1240px 이다. 그 아래에서는 본문이 깎이기 시작하므로 목차를 접는다.
+   --gutter 나 --toc-w 를 건드리면 이 값을 다시 계산해야 한다. */
+@media (max-width: 1240px) {
   .app__main--post {
     max-width: calc(var(--read) + 3.5rem);
     grid-template-columns: minmax(0, 1fr);
@@ -480,9 +518,15 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 
 /* ── table of contents ──────────────────────────────────── */
 .toc {
-  justify-self: start; align-self: start;
+  /* 자기 칸의 오른쪽 끝에 붙는다. 칸이 남는 공간을 먹으므로 곧 화면 오른쪽 끝이다. */
+  justify-self: end; align-self: start;
   position: sticky; top: 52px;
-  width: 100%; max-height: calc(100vh - 84px); overflow-y: auto;
+  /* 100% 로 두면 칸(1fr)을 통째로 채워서 오른쪽 정렬이 아무 일도 하지 않는다.
+     제 폭을 고정해야 오른쪽 끝에 붙는다. 본문과의 간격은 이 상자의 왼쪽 안쪽
+     여백으로 갖고 다닌다(위 .app__main--post 주석 참고). */
+  width: calc(var(--toc-w) + var(--gutter));
+  padding-left: var(--gutter);
+  max-height: calc(100vh - 84px); overflow-y: auto;
   display: flex; flex-direction: column; gap: 9px;
 }
 /* 내용이 "목차", "태그" 라 uppercase 는 아무 일도 하지 않는다. 그래서 걷었다. */
@@ -837,6 +881,26 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .prose .diagram-scroll + .diagram-note { margin-top: 10px; }
 
+/* ── 조작하는 것에는 가벼운 재질 ────────────────────────── */
+/* 무거운 재질은 구역을 나누고, 가벼운 재질은 조작할 것에 시선을 준다. 칩과 버튼에
+   옅은 면과 위쪽 빛 선을 줘서 바탕에서 한 겹 떠 있게 만든다. 위쪽 규칙들이 이미
+   background 를 정해 두었으므로 그것들보다 뒤에 둬야 한다.
+
+   blur 는 일부러 걸지 않았다. 이 칩들 뒤는 전부 단색 바탕이고, 단색을 흐리면 같은
+   단색이 나온다. 비침으로 얻는 게 0 이다. 반면 아카이브에는 태그 칩이 133개 있어서
+   각각에 backdrop-filter 를 걸면 스크롤할 때마다 그만큼 다시 합성해야 한다. 얻는 것
+   없이 비용만 드는 거래여서 면과 빛 선만 남겼다. 히어로 그라디언트처럼 뒤가 단색이
+   아닌 자리에 조작 요소를 두게 되면, 그때 그 요소에만 blur 를 더하면 된다.
+
+   눌린 칩(aria-pressed / aria-current)은 명시도가 높아 강조색 면을 그대로 지킨다. */
+.filter-bar button,
+.tag-chip,
+.tile,
+.code-block__copy {
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  box-shadow: inset 0 1px 0 var(--lip);
+}
+
 /* ── 테마 전환 ──────────────────────────────────────────── */
 /* 라이트와 다크를 즉시 뒤집으면 화면 전체 밝기가 한 프레임에 튄다. 눈이 아프고,
    무엇이 바뀌었는지 따라가기도 어렵다. 토글이 눌린 동안에만 색을 이어 준다.
@@ -877,12 +941,25 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   }
 }
 
-/* 2) 투명도 줄이기. 좁은 화면 도크가 유일한 반투명 면이다. 흐림을 걷고 불투명하게. */
+/* 2) 투명도 줄이기. 흐림을 걷고 면을 불투명하게 되돌린다. 도크는 box-shadow 로
+      테두리를 그리고 있었으므로 그 자리에 실선 테를 다시 세운다. */
 @media (prefers-reduced-transparency: reduce) {
   .dock {
     background: var(--surface);
     backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 0 0 0.5px var(--rule);
   }
+  .filter-bar button,
+  .tag-chip,
+  .tile,
+  .code-block__copy {
+    background: var(--surface);
+    box-shadow: none;
+  }
+  .filter-bar button[aria-pressed="true"] { background: var(--clay-soft); }
+  /* 위 끝 페이드도 콘텐츠를 흐리는 층이므로 걷는다 */
+  .scroll-edge { display: none; }
 }
 
 /* 3) 대비 높이기. 이 사이트는 0.5px 헤어라인으로 면을 나눈다. 대비를 올려 달라는
@@ -909,4 +986,21 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   .tile, .post-nav a, .code-block, .post-metrics, .prose figure img { border-width: 1px; }
   .filter-bar button, .tag-chip, .work__stats > div { border-width: 1px; }
   a:hover { text-decoration: underline; }
+
+  /* 대비를 올려 달라는 사람에게 반투명한 면은 경계가 흐려 보인다. 면을 불투명하게
+     되돌리고, 빛 선처럼 미세한 장식은 걷는다. */
+  .dock {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 0 0 1px var(--rule);
+  }
+  .filter-bar button,
+  .tag-chip,
+  .tile,
+  .code-block__copy {
+    background: var(--surface);
+    box-shadow: none;
+  }
+  .filter-bar button[aria-pressed="true"] { background: var(--clay-soft); }
 }

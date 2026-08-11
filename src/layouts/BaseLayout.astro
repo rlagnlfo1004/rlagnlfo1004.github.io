@@ -81,7 +81,14 @@ const ogImage = new URL(OG_IMAGE, Astro.site);
 
   <body>
     <a class="skip-link" href="#content">본문으로 건너뛰기</a>
-    {progress && <div class="read-progress"><i id="read-progress"></i></div>}
+    {/* 진행바가 있는 글 페이지에만 위 끝 페이드를 깐다. 겹치는 것이 없는 페이지에
+        그림자를 두면 이유 없는 장식이 된다. */}
+    {progress && (
+      <>
+        <div class="scroll-edge" aria-hidden="true"></div>
+        <div class="read-progress"><i id="read-progress"></i></div>
+      </>
+    )}
 
     {/* 이동 수단은 화면 왼쪽 끝에 아이콘 한 줄로만 붙인다. 본문 폭은 건드리지 않는다. */}
     <nav class="dock" aria-label="사이트">
@@ -175,12 +182,15 @@ const ogImage = new URL(OG_IMAGE, Astro.site);
         if (e.key === "d" || e.key === "D" || e.key === "ㅇ") toggle();
       });
 
-      // 읽기 진행률
+      // 읽기 진행률 + 위 끝 페이드 켜는 시점
       const bar = document.getElementById("read-progress");
       if (bar) {
         const update = () => {
           const max = document.documentElement.scrollHeight - innerHeight;
           bar.style.width = max > 0 ? `${Math.min(100, (scrollY / max) * 100)}%` : "0%";
+          // 맨 위에서는 겹치는 것이 없으니 페이드를 끈다 (global.css 의 .scroll-edge)
+          if (scrollY > 24) root.dataset.scrolled = "";
+          else delete root.dataset.scrolled;
         };
         addEventListener("scroll", update, { passive: true });
         addEventListener("resize", update);
