@@ -19,18 +19,46 @@
   --mark:       #FBEFC4;
   --code-bg:    #F7F8FA;
 
-  --font-serif: "Source Serif 4", "Noto Serif KR", Georgia, serif;
+  /* 서체는 둘뿐이다. 화면 어디서도 서체 경계가 보이지 않게 글자는 전부 Pretendard 로
+     읽고, 보폭이 맞아야 하는 것(코드, 숫자, 라벨)만 mono 로 간다. 예전에는 여기에
+     Source Serif 4 와, 토큰에 없이 숨어 있던 Inter 까지 넷이 섞여 있었다. */
   --font-sans:  "Pretendard Variable", Pretendard, -apple-system, sans-serif;
   --font-mono:  "JetBrains Mono", "D2Coding", ui-monospace, monospace;
+
+  /* 트래킹은 크기마다 다르게 준다. 글자가 커질수록 자간이 넓어 보이므로 조이고,
+     작은 글자는 조금 벌려야 읽힌다. 한 값을 전역에 박아두면 어느 크기에선 반드시 틀린다.
+     한글은 글자틀이 네모지고 Pretendard 의 사이드베어링이 넓어, 본문을 0 까지
+     풀면 성기게 보인다. 그래서 본문은 0 이 아니라 -0.01em 에 세운다. */
+  --track-display: -0.03em;   /* 2rem 이상. 제목 한 줄이 화면을 가로지르는 크기 */
+  --track-title:   -0.02em;   /* 1.25rem ~ 2rem */
+  --track-body:    -0.01em;   /* 0.95rem ~ 1.2rem. 본문 */
+  --track-small:   0.005em;   /* 0.9rem 이하. 캡션과 메타 */
+
+  /* 크기 계단. 21개로 흩어져 있던 값을 12개로 모았다. 0.5px 만 다른 쌍
+     (12/12.5, 13/13.5, 15/15.5, 16/16.5)은 의도가 아니라 그때그때 고른
+     흔적이라 합쳤다. 역할 이름으로 부르면 다음에 고를 때 헷갈리지 않는다. */
+  --t-h1:    2.375rem;  /* 38px. 홈·아카이브·소개·글 제목이 모두 같은 크기다 */
+  --t-h1-sm: 1.875rem;  /* 30px. 좁은 화면의 h1 */
+  --t-h2:    1.5rem;    /* 24px. 글 안의 큰 제목 */
+  --t-h3:    1.25rem;   /* 20px. 글 안의 작은 제목, 경력 이름, 타일 숫자 */
+  --t-lead:  1.25rem;   /* 20px. 제목 아래 소개 한 단락 */
+  --t-prose: 1.1875rem; /* 19px. 글 본문만 */
+  --t-base:  1.125rem;  /* 18px. UI 기본 */
+  --t-lg:    1rem;      /* 16px. 목록 항목의 이름 */
+  --t-md:    0.9375rem; /* 15px. 설명문 */
+  --t-sm:    0.875rem;  /* 14px. 부가 설명, 목차, 코드 */
+  --t-xs:    0.8125rem; /* 13px. 메타, 태그 */
+  --t-2xs:   0.75rem;   /* 12px. 최소. 라벨과 숫자 꼬리표 */
+  --t-num:   1.375rem;  /* 22px. 실측 숫자 */
 
   --radius: 8px;
   --radius-lg: 12px;  /* 목록 행처럼 넓은 면을 칠할 때 */
 
   /* 읽는 칸 하나를 화면 가운데에 두고, 목차와 도크는 그 바깥에 건다. */
-  --read: 820px;   /* 본문 한 칸의 폭 */
-  --toc-w: 200px;  /* 본문 오른쪽에 매다는 목차 */
-  --gutter: 56px;  /* 본문과 목차 사이 */
-  --dock-w: 76px;  /* 왼쪽 끝 아이콘 레일이 먹는 폭 */
+  --read: 51.25rem;   /* 본문 한 칸의 폭 */
+  --toc-w: 12.5rem;  /* 본문 오른쪽에 매다는 목차 */
+  --gutter: 5.5rem;  /* 본문과 목차 사이. 목차가 본문에 붙어 읽기를 방해하지 않게 넓게 둔다 */
+  --dock-w: 4.75rem;  /* 왼쪽 끝 아이콘 레일이 먹는 폭 */
 
   color-scheme: light;
 }
@@ -56,7 +84,15 @@
 /* ── base ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 32px; }
+/* 글자 크기를 전부 rem 으로 잡아 두었으므로 사용자가 브라우저 기본 크기를 올리면
+   조판과 읽는 칸이 같이 커진다. 다만 기본값을 16px 아래로 낮춰 둔 브라우저도 있어서
+   (이 저장소를 쓰는 크롬은 medium 이 14px 다) 그대로 두면 설계한 18px 본문이
+   15.75px 로 쪼그라든다. 그래서 키우는 쪽만 따라가고, 줄이는 쪽은 설계값에서 멈춘다. */
+html {
+  font-size: max(100%, 16px);
+  scroll-behavior: smooth;
+  scroll-padding-top: 2rem;
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
@@ -64,9 +100,9 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 18px;
+  font-size: var(--t-base);
   line-height: 1.85;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--track-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -82,7 +118,66 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 
 :focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; border-radius: 4px; }
 
-.tnum { font-family: "Inter", var(--font-sans); font-variant-numeric: tabular-nums; }
+/* ── 작은 라벨 하나 ─────────────────────────────────────── */
+/* 눈썹, 그룹 머리, 연도, 목차 머리, 코드 언어, 표 머리, 실측 항목 이름 —
+   전부 "덩어리 위에 얹는 작은 이름"이라는 같은 역할이다. 그런데 서체가 mono/Inter/
+   sans 셋으로, 크기가 11~15px 다섯 가지로, 굵기가 500/600 으로, 트래킹이
+   0.04~0.12em 네 가지로 갈라져 있었다. 하나로 모은다. 내용이 라틴 대문자인
+   것만 아래에서 따로 uppercase 를 준다. */
+.eyebrow,
+.app__head h2,
+.section__head h2,
+.row h2,
+.year__label,
+.toc__label,
+.code-block__lang,
+.post-metrics dt,
+.prose thead th {
+  font-family: var(--font-mono);
+  font-size: var(--t-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+/* ── 누름 피드백 ────────────────────────────────────────── */
+/* 지금까지 반응은 hover 뿐이었다. 손을 뗄 때(click)를 기다리면 누른 순간에 화면이
+   아무 말도 하지 않아 죽은 느낌이 든다. :active 는 pointerdown 에서 바로 걸리므로
+   누르는 즉시 답한다. 되돌아오는 쪽은 전환을 걸지 않아 손을 떼면 곧바로 제자리다. */
+.dock__item,
+.filter-bar button,
+.tag-chip,
+.code-block__copy,
+.post-row,
+.tile,
+.post-nav a {
+  /* iOS 기본 회색 플래시가 아래 눌림과 겹쳐 두 번 반응하는 것처럼 보인다 */
+  -webkit-tap-highlight-color: transparent;
+  /* 더블탭 확대를 기다리느라 생기는 탭 지연을 없앤다 */
+  touch-action: manipulation;
+}
+
+.dock__item:active,
+.filter-bar button:active,
+.tag-chip:active,
+.code-block__copy:active,
+.tile:active,
+.post-nav a:active {
+  transform: scale(0.97);
+  transition: transform 90ms ease-out;
+}
+
+/* 목록 행은 면이 넓어서 같은 배율로 줄이면 눈에 크게 움직인다.
+   배율은 거의 0 으로 두고 눌린 면을 칠하는 쪽으로 답한다. */
+.post-row:active {
+  background: var(--sunk);
+  transform: scale(0.995);
+  transition: transform 90ms ease-out;
+}
+
+/* 숫자는 mono 하나로 통일했다. 예전에는 여기만 Inter 라, 목록 한 행에서
+   프로젝트 라벨(mono)과 날짜(Inter)가 다른 서체로 나란히 붙어 있었다. */
+.tnum { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
 .skip-link {
   position: absolute; left: -9999px; top: 8px;
@@ -122,7 +217,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
 }
 .dock__item svg.dock__glyph { fill: currentColor; stroke: none; }
-.dock__label { font-size: 11px; line-height: 1; letter-spacing: -0.02em; }
+.dock__label { font-size: var(--t-2xs); line-height: 1; letter-spacing: var(--track-small); }
 .dock__rule { width: 24px; height: 0.5px; margin: 8px 0; background: var(--rule); }
 
 @media (max-width: 900px) {
@@ -136,7 +231,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
     backdrop-filter: blur(8px);
   }
   .dock__item { width: 56px; padding: 7px 0; gap: 4px; }
-  .dock__label { font-size: 10px; }
+  .dock__label { font-size: var(--t-2xs); }
   .dock__rule { width: 0.5px; height: 24px; margin: 0 4px; }
 }
 
@@ -145,7 +240,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   display: flex; align-items: baseline; justify-content: space-between;
   flex-wrap: wrap; gap: 8px 20px;
   border-top: 0.5px solid var(--rule);
-  padding: 28px 0; font-size: 13.5px; color: var(--ink-3);
+  padding: 28px 0; font-size: var(--t-sm); color: var(--ink-3);
 }
 .site-footer__links { display: flex; gap: 16px; }
 .site-footer a { color: var(--ink-3); }
@@ -157,7 +252,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .app__body { min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
 /* max-width 는 테두리 기준이라, 읽는 폭을 그대로 지키려면 좌우 여백을 더해 준다. */
 .app__main, .site-footer {
-  width: 100%; max-width: calc(var(--read) + 56px);
+  width: 100%; max-width: calc(var(--read) + 3.5rem);
   margin: 0 auto; padding-left: 28px; padding-right: 28px;
 }
 .app__main { padding-top: 64px; padding-bottom: 88px; }
@@ -165,7 +260,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 /* 글 상세는 본문을 가운데에 세운 채 목차만 오른쪽 여백에 매단다.
    왼쪽에 같은 폭의 빈 칸을 둬야 본문이 화면 정중앙에 온다. */
 .app__main--post {
-  max-width: calc(var(--toc-w) * 2 + var(--gutter) * 2 + var(--read) + 56px);
+  max-width: calc(var(--toc-w) * 2 + var(--gutter) * 2 + var(--read) + 3.5rem);
   display: grid; justify-content: center;
   grid-template-columns: var(--toc-w) minmax(0, var(--read)) var(--toc-w);
   column-gap: var(--gutter);
@@ -174,18 +269,22 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .app__main--post > main { grid-column: 2; min-width: 0; }
 .app__main--post > .toc { grid-column: 3; }
 
-/* 본문 폭이 늘어난 만큼 칸이 접히는 지점도 같이 올린다. */
-@media (max-width: 1460px) {
+/* 접히는 지점은 손으로 고른 값이 아니라 계산값이다. 한 배치가 본문 폭을 온전히
+   지키려면 화면이 (칸 합 + 좌우 여백 3.5rem + 왼쪽 레일 4.75rem) 만큼은 돼야 한다.
+   3단: 12.5 + 5.5 + 51.25 + 5.5 + 12.5 + 3.5 + 4.75 = 95.5rem = 1528px → 1540px
+   2단: 51.25 + 5.5 + 12.5 + 3.5 + 4.75 = 77.5rem = 1240px → 1260px
+   --gutter 를 건드리면 이 두 값도 다시 계산해야 한다. */
+@media (max-width: 1540px) {
   .app__main--post {
-    max-width: calc(var(--toc-w) + var(--gutter) + var(--read) + 56px);
+    max-width: calc(var(--toc-w) + var(--gutter) + var(--read) + 3.5rem);
     grid-template-columns: minmax(0, var(--read)) var(--toc-w);
   }
   .app__main--post > main { grid-column: 1; }
   .app__main--post > .toc { grid-column: 2; }
 }
-@media (max-width: 1200px) {
+@media (max-width: 1260px) {
   .app__main--post {
-    max-width: calc(var(--read) + 56px);
+    max-width: calc(var(--read) + 3.5rem);
     grid-template-columns: minmax(0, 1fr);
   }
   .app__main--post > .toc { display: none; }
@@ -194,7 +293,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 /* ── post meta + title ──────────────────────────────────── */
 .post-meta {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  font-size: 13px; color: var(--ink-3); margin-bottom: 16px;
+  font-size: var(--t-xs); color: var(--ink-3); margin-bottom: 16px;
 }
 .chip {
   display: inline-flex; align-items: center; height: 22px; padding: 0 9px;
@@ -203,33 +302,37 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .post-title {
   margin: 0 0 18px;
-  font-family: var(--font-serif); font-size: 40px; line-height: 1.35;
-  font-weight: 600; letter-spacing: -0.02em; text-wrap: pretty;
+  font-size: var(--t-h1); line-height: 1.22;
+  font-weight: 600; letter-spacing: var(--track-display); text-wrap: pretty;
 }
 .post-lead {
   margin: 0 0 44px;
-  font-family: var(--font-serif); font-size: 20px; line-height: 1.75;
-  letter-spacing: 0; color: var(--ink-2); text-wrap: pretty;
+  font-size: var(--t-lead); line-height: 1.75;
+  letter-spacing: var(--track-body); color: var(--ink-2); text-wrap: pretty;
 }
 
 /* ── prose ──────────────────────────────────────────────── */
-.prose { font-size: 19px; line-height: 1.85; }
+.prose { font-size: var(--t-prose); line-height: 1.85; }
 
 /* 리셋을 먼저 두고 간격을 뒤에 준다.
    :where() 로 명시도를 0 으로 낮춰야 아래 owl 셀렉터가 이긴다. */
 .prose :where(p) { margin: 0; text-wrap: pretty; }
 .prose :where(ul, ol) { margin: 0; padding-left: 22px; }
-.prose > * + * { margin-top: 22px; }
+.prose > * + * { margin-top: 1.375rem; }
 
+/* 제목의 위 간격은 아래 간격보다 뚜렷하게 커야 한다. 그래야 제목이 앞 단락에서
+   떨어져 나오면서도 자기 뒤에 오는 본문에는 붙어 보인다. 위/아래를 2:1 로 둔다.
+   px 이 아니라 rem 이라, 글자 크기를 올린 사람에게는 간격도 같이 벌어진다. */
 .prose h2 {
-  margin: 52px 0 18px;
-  font-family: var(--font-serif); font-size: 25px; line-height: 1.45;
-  font-weight: 600; letter-spacing: -0.01em;
-  padding-bottom: 10px; border-bottom: 0.5px solid var(--rule);
+  margin: 4rem 0 1.375rem;          /* 64px 위 / 22px + 아래 여백 10px */
+  font-size: var(--t-h2); line-height: 1.38;
+  font-weight: 600; letter-spacing: var(--track-title);
+  padding-bottom: 0.625rem; border-bottom: 0.5px solid var(--rule);
 }
 .prose h3 {
-  margin: 36px 0 14px;
-  font-size: 20px; line-height: 1.5; font-weight: 700; letter-spacing: -0.025em;
+  margin: 2.75rem 0 1.125rem;       /* 44px 위 / 18px 아래 */
+  font-size: var(--t-h3); line-height: 1.45;
+  font-weight: 600; letter-spacing: var(--track-title);
 }
 .prose h2 + *, .prose h3 + * { margin-top: 0; }
 
@@ -241,8 +344,8 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .prose blockquote {
   margin: 32px 0; padding: 2px 0 2px 20px;
   border-left: 2px solid var(--clay); border-radius: 0;
-  font-family: var(--font-serif); font-size: 18px; line-height: 1.75;
-  letter-spacing: 0; color: var(--ink-2);
+  font-size: var(--t-base); line-height: 1.75;
+  letter-spacing: var(--track-body); color: var(--ink-2);
 }
 .prose blockquote p { margin: 0; }
 
@@ -261,18 +364,17 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .prose figcaption {
   margin-top: 10px; font-family: var(--font-sans);
-  font-size: 13.5px; line-height: 1.6; color: var(--ink-3);
+  font-size: var(--t-sm); line-height: 1.6; color: var(--ink-3);
 }
 
 /* ── tables ─────────────────────────────────────────────── */
 .prose table {
   width: 100%; border-collapse: collapse;
-  font-size: 15.5px; line-height: 1.6; margin: 28px 0;
+  font-size: var(--t-md); line-height: 1.6; margin: 28px 0;
 }
 .prose thead th {
   text-align: right; padding: 0 0 10px 12px;
-  font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em;
-  text-transform: uppercase; color: var(--ink-3);
+  text-transform: uppercase;
   border-bottom: 0.5px solid var(--ink-3);
   white-space: nowrap;
 }
@@ -280,7 +382,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .prose tbody td {
   padding: 13px 0 13px 12px; text-align: right;
   border-bottom: 0.5px solid var(--rule);
-  font-family: "Inter", var(--font-sans); font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
   color: var(--ink-2); white-space: nowrap;
 }
 .prose tbody td:first-child {
@@ -288,7 +390,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   font-family: var(--font-sans); color: var(--ink); white-space: normal;
 }
 .prose tbody tr:last-child td { font-weight: 700; color: var(--ink); }
-.prose .table-note { margin-top: -16px; font-size: 13.5px; color: var(--ink-3); }
+.prose .table-note { margin-top: -16px; font-size: var(--t-sm); color: var(--ink-3); }
 
 /* 셀에 nowrap 이 걸려 있어서 열이 많아지면 표가 본문 폭을 넘는다. 넘친 부분이 오른쪽
    목차 위로 겹치지 않도록 표마다 스크롤 컨테이너를 씌운다. 래퍼는 rehype 플러그인이
@@ -316,12 +418,11 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   height: 38px; padding: 0 12px; border-bottom: 0.5px solid var(--rule);
 }
 .code-block__lang {
-  font-family: "Inter", var(--font-sans); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3);
+  text-transform: uppercase;
 }
 .code-block__copy {
   display: inline-flex; align-items: center; height: 24px; padding: 0 9px;
-  cursor: pointer; font: inherit; font-size: 12px; color: var(--ink-2);
+  cursor: pointer; font: inherit; font-size: var(--t-2xs); color: var(--ink-2);
   background: var(--surface); border: 0.5px solid var(--rule); border-radius: 6px;
   transition: color 140ms, filter 140ms;
 }
@@ -332,10 +433,18 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   margin: 0 !important;
   padding: 14px 0;
   background: transparent !important;
-  font-family: var(--font-mono); font-size: 14px; line-height: 1.75;
+  font-family: var(--font-mono); font-size: var(--t-sm); line-height: 1.75;
   overflow-x: auto;
 }
-.astro-code code { display: block; width: max-content; min-width: 100%; }
+/* 브라우저 기본 스타일시트에 code { font-family: monospace } 가 있고, 그게 이
+   <code> 에 직접 걸린다. 직접 걸린 선언은 부모에서 물려받는 값을 이기므로, 위
+   .astro-code 에 준 JetBrains Mono 가 여기서 끊겨 코드 블록만 시스템 기본 고정폭
+   (맥이면 Menlo)으로 나오고 있었다. 인라인 코드는 JetBrains Mono 라 한 글 안에서
+   고정폭 서체가 두 개로 갈렸다. 물려받도록 되돌린다. */
+.astro-code code {
+  font-family: inherit;
+  display: block; width: max-content; min-width: 100%;
+}
 .astro-code .line {
   padding: 0 16px 0 0;
   counter-increment: ln;
@@ -376,13 +485,10 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   width: 100%; max-height: calc(100vh - 84px); overflow-y: auto;
   display: flex; flex-direction: column; gap: 9px;
 }
-.toc__label {
-  font-family: "Inter", var(--font-sans); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
-  margin-bottom: 2px;
-}
+/* 내용이 "목차", "태그" 라 uppercase 는 아무 일도 하지 않는다. 그래서 걷었다. */
+.toc__label { margin-bottom: 2px; }
 .toc a {
-  font-size: 13.5px; line-height: 1.5; color: var(--ink-3);
+  font-size: var(--t-sm); line-height: 1.5; color: var(--ink-3);
   border-left: 1px solid var(--rule); padding-left: 10px;
   transition: color 140ms, border-color 140ms;
 }
@@ -406,10 +512,11 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 }
 .post-nav a:hover { border-color: var(--ink-3); text-decoration: none; }
 .post-nav a:last-child { text-align: right; }
-.post-nav span { display: block; font-size: 12px; color: var(--ink-3); margin-bottom: 5px; }
+.post-nav span { display: block; font-size: var(--t-2xs); color: var(--ink-3); margin-bottom: 5px; }
 .post-nav b {
-  display: block; font-family: var(--font-serif); font-size: 16px;
-  line-height: 1.5; font-weight: 600; letter-spacing: 0;
+  /* 이전/다음 글은 읽는 텍스트가 아니라 이동 장치다. 목록 제목과 같은 산세리프로 둔다. */
+  display: block; font-size: var(--t-lg);
+  line-height: 1.5; font-weight: 600; letter-spacing: var(--track-body);
 }
 @media (max-width: 640px) { .post-nav { flex-direction: column; } }
 
@@ -423,13 +530,13 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .filter-bar button {
   display: inline-flex; align-items: baseline; gap: 7px;
   padding: 5px 13px; cursor: pointer; font: inherit;
-  font-size: 13.5px; letter-spacing: -0.015em; color: var(--ink-2);
+  font-size: var(--t-sm); letter-spacing: var(--track-small); color: var(--ink-2);
   background: none; border: 0.5px solid var(--rule); border-radius: 100px;
   transition: color 140ms, border-color 140ms;
 }
 .filter-bar button:hover { color: var(--ink); border-color: var(--ink-3); }
 .filter-bar button b {
-  font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; color: var(--ink-3);
+  font-family: var(--font-mono); font-size: var(--t-2xs); font-weight: 500; color: var(--ink-3);
 }
 .filter-bar button[aria-pressed="true"] {
   color: var(--clay-text); border-color: var(--clay); background: var(--clay-soft);
@@ -440,19 +547,20 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 16px; margin-bottom: 14px;
 }
-.app__head h2 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.02em; }
-.app__head span { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
+.app__head h2 { margin: 0; }
+.app__head span { font-family: var(--font-mono); font-size: var(--t-2xs); color: var(--ink-3); }
 
 .home-title {
-  margin: 0 0 18px; font-size: 38px; line-height: 1.3;
-  font-weight: 600; letter-spacing: -0.035em; text-wrap: pretty;
+  margin: 0 0 18px;
+  font-size: var(--t-h1); line-height: 1.22;
+  font-weight: 600; letter-spacing: var(--track-display); text-wrap: pretty;
 }
 .home-lead {
   margin: 0 0 44px; max-width: 60ch;
-  font-size: 16.5px; line-height: 1.75; letter-spacing: -0.015em;
-  color: var(--ink-2); text-wrap: pretty;
+  font-size: var(--t-lead); line-height: 1.75;
+  letter-spacing: var(--track-body); color: var(--ink-2); text-wrap: pretty;
 }
-.home-note { margin: 0; font-size: 15px; line-height: 1.7; color: var(--ink-3); }
+.home-note { margin: 0; font-size: var(--t-md); line-height: 1.7; color: var(--ink-3); }
 
 /* 칩과 타일이 전부 둥근 화면이라 목록만 각지면 튄다. 행을 좌우로 14px 씩
    내밀어 놓고 그 안에서 둥글게 칠하면, 글자는 본문 선에 그대로 맞는다. */
@@ -470,21 +578,21 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 /* display 를 직접 지정했으므로 브라우저 기본 [hidden] 규칙이 밀린다. */
 .post-row[hidden] { display: none; }
 .post-row h3 {
-  margin: 0 0 5px; font-size: 16.5px; line-height: 1.5;
-  font-weight: 600; letter-spacing: -0.025em; text-wrap: pretty;
+  margin: 0 0 5px; font-size: var(--t-lg); line-height: 1.5;
+  font-weight: 600; letter-spacing: var(--track-body); text-wrap: pretty;
 }
 .post-row h3 a { color: var(--ink); }
-.post-row p { margin: 0; font-size: 14px; line-height: 1.65; color: var(--ink-2); text-wrap: pretty; }
+.post-row p { margin: 0; font-size: var(--t-sm); line-height: 1.65; color: var(--ink-2); text-wrap: pretty; }
 .post-row__rail {
   display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
-  padding-top: 3px; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-3);
+  padding-top: 3px; font-family: var(--font-mono); font-size: var(--t-2xs); color: var(--ink-3);
 }
 .post-row__rail b { font-weight: 500; color: var(--clay-text); }
 
-.list-note { margin: 20px 0 0; font-size: 13.5px; line-height: 1.7; color: var(--ink-3); }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12.5px; color: var(--ink-3); }
+.list-note { margin: 20px 0 0; font-size: var(--t-sm); line-height: 1.7; color: var(--ink-3); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; font-size: var(--t-xs); color: var(--ink-3); }
 .tags span { padding: 2px 8px; border-radius: 6px; background: var(--sunk); }
-.tags--lg { font-size: 13.5px; gap: 8px; }
+.tags--lg { font-size: var(--t-sm); gap: 8px; }
 .tags--lg span { padding: 4px 11px; }
 
 /* ── hero ───────────────────────────────────────────────── */
@@ -494,7 +602,7 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   background: radial-gradient(680px 300px at 8% 0%, var(--clay-soft), transparent 70%);
 }
 .hero__inner {
-  width: 100%; max-width: calc(var(--read) + 56px); margin: 0 auto;
+  width: 100%; max-width: calc(var(--read) + 3.5rem); margin: 0 auto;
   padding: 56px 28px 40px;
   display: grid; grid-template-columns: 1fr 240px; gap: 48px; align-items: end;
 }
@@ -508,9 +616,10 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   object-fit: cover;
 }
 .eyebrow {
-  margin: 0 0 14px; font-family: var(--font-mono);
-  font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
+  margin: 0 0 14px;
+  /* 눈썹만 색으로 힘을 준다. 서체와 크기는 다른 라벨과 같다. */
   color: var(--clay-text);
+  text-transform: uppercase;
 }
 /* 로고는 색이 밝은 배경을 전제로 그려져 있어 다크 모드에서도 흰 타일 위에 올린다. */
 .logo {
@@ -532,33 +641,38 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   gap: 16px; margin-bottom: 20px;
 }
 .section__head h2 {
-  margin: 0; font-family: var(--font-mono);
-  font-size: 14px; font-weight: 500; letter-spacing: 0.06em; color: var(--ink-2);
+  margin: 0;
 }
-.section__head span { font-size: 13px; color: var(--ink-3); }
+.section__head span { font-size: var(--t-xs); color: var(--ink-3); }
 
 /* ── 아카이브와 소개 ────────────────────────────────────── */
 .page-title {
-  margin: 0 0 12px; font-family: var(--font-serif);
-  font-size: 34px; line-height: 1.3; font-weight: 600; letter-spacing: -0.015em;
+  margin: 0 0 12px;
+  font-size: var(--t-h1); line-height: 1.22;
+  font-weight: 600; letter-spacing: var(--track-display);
 }
-.page-lead { margin: 0 0 8px; font-size: 15.5px; color: var(--ink-2); }
+/* 리드 셋(글·홈·아카이브·소개)이 서체도 크기도 다 달랐다. 한 규칙으로 묶는다. */
+.page-lead {
+  margin: 0 0 8px;
+  font-size: var(--t-lead); line-height: 1.75;
+  letter-spacing: var(--track-body); color: var(--ink-2); text-wrap: pretty;
+}
 
 .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .tile {
   display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
   padding: 14px 16px; background: var(--surface);
   border: 0.5px solid var(--rule); border-radius: var(--radius);
-  font-size: 15px; color: var(--ink);
+  font-size: var(--t-md); color: var(--ink);
 }
 .tile:hover { border-color: var(--clay); text-decoration: none; }
-.tile b { font-family: var(--font-mono); font-size: 19px; font-weight: 500; color: var(--clay-text); }
+.tile b { font-family: var(--font-mono); font-size: var(--t-h3); font-weight: 500; color: var(--clay-text); }
 
 .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag-chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 4px 11px; cursor: pointer;
-  font-size: 13px; color: var(--ink-2);
+  font-size: var(--t-xs); color: var(--ink-2);
   border: 0.5px solid var(--rule); border-radius: 100px;
   transition: color 140ms, border-color 140ms;
 }
@@ -570,36 +684,34 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .year { margin-top: 28px; }
 .year[hidden] { display: none; }
 .year__label {
-  margin: 0 0 4px; font-family: var(--font-mono);
-  font-size: 13px; font-weight: 500; color: var(--ink-3); letter-spacing: 0.06em;
+  margin: 0 0 4px;
 }
 
 .row { display: grid; grid-template-columns: 120px 1fr; gap: 24px; margin-top: 36px; }
 .row h2 {
-  margin: 0; padding-top: 4px; font-family: var(--font-mono);
-  font-size: 12px; font-weight: 500; letter-spacing: 0.08em; color: var(--ink-3);
+  margin: 0; padding-top: 4px;
 }
-.row__text { margin: 0; font-size: 15.5px; line-height: 1.8; color: var(--ink-2); }
+.row__text { margin: 0; font-size: var(--t-md); line-height: 1.8; color: var(--ink-2); }
 
 .timeline { margin: 0; padding: 0; list-style: none; }
 .timeline__item {
   display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
   padding: 10px 0 10px 16px;
   border-left: 2px solid var(--rule); border-top: 0.5px solid var(--rule-soft);
-  font-size: 15px; line-height: 1.5;
+  font-size: var(--t-md); line-height: 1.5;
 }
 .timeline__item:first-child { border-top: 0; }
 .timeline__item.is-now { border-left-color: var(--clay); }
 .timeline__name { display: inline-flex; align-items: center; gap: 9px; }
 .timeline__item span:last-child {
-  flex: none; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3);
+  flex: none; font-family: var(--font-mono); font-size: var(--t-2xs); color: var(--ink-3);
 }
 
 .project-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; }
 .project-list li { display: flex; flex-direction: column; gap: 2px; }
-.project-list b { font-size: 15.5px; font-weight: 600; letter-spacing: -0.01em; }
-.project-list span { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
-.project-list__when { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
+.project-list b { font-size: var(--t-lg); font-weight: 600; letter-spacing: var(--track-body); }
+.project-list span { font-size: var(--t-sm); line-height: 1.6; color: var(--ink-2); }
+.project-list__when { font-family: var(--font-mono); font-size: var(--t-2xs); color: var(--ink-3); }
 
 /* ── 글 머리 실측 요약 ──────────────────────────────────── */
 .post-metrics {
@@ -608,13 +720,9 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   background: var(--surface); border: 0.5px solid var(--rule); border-radius: var(--radius);
 }
 .post-metrics > div { display: flex; flex-direction: column; gap: 4px; }
-.post-metrics dt {
-  font-family: var(--font-mono); font-size: 11.5px;
-  letter-spacing: 0.06em; color: var(--ink-3);
-}
 .post-metrics dd {
   margin: 0; font-family: var(--font-mono);
-  font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.2;
+  font-size: var(--t-num); font-weight: 500; color: var(--ink); line-height: 1.2;
 }
 .post-metrics > div:first-child dd { color: var(--clay-text); }
 
@@ -630,11 +738,11 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
 .work__head h3 {
   margin: 0; flex: 1 1 auto;
   display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px;
-  font-family: var(--font-serif); font-size: 20px; font-weight: 600; letter-spacing: -0.01em;
+  font-size: var(--t-h3); font-weight: 600; letter-spacing: var(--track-title);
 }
-.work__head h3 span { font-family: var(--font-sans); font-size: 14px; font-weight: 400; color: var(--ink-2); }
-.work__when { flex: none; margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
-.work__summary { margin: 0 0 14px; font-size: 15.5px; line-height: 1.75; color: var(--ink-2); }
+.work__head h3 span { font-family: var(--font-sans); font-size: var(--t-sm); font-weight: 400; color: var(--ink-2); }
+.work__when { flex: none; margin-left: auto; font-family: var(--font-mono); font-size: var(--t-2xs); color: var(--ink-3); }
+.work__summary { margin: 0 0 14px; font-size: var(--t-md); line-height: 1.75; color: var(--ink-2); }
 .work__stats {
   margin: 0 0 16px; display: flex; flex-wrap: wrap; gap: 10px;
 }
@@ -643,28 +751,28 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   padding: 7px 13px; background: var(--surface);
   border: 0.5px solid var(--rule); border-radius: 100px;
 }
-.work__stats dt { font-size: 12.5px; color: var(--ink-3); }
+.work__stats dt { font-size: var(--t-xs); color: var(--ink-3); }
 .work__stats dd {
-  margin: 0; font-family: var(--font-mono); font-size: 14px;
+  margin: 0; font-family: var(--font-mono); font-size: var(--t-sm);
   font-weight: 500; color: var(--clay-text);
 }
 .work__wins { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 9px; }
-.work__wins li { font-size: 15px; line-height: 1.75; color: var(--ink); text-wrap: pretty; }
+.work__wins li { font-size: var(--t-md); line-height: 1.75; color: var(--ink); text-wrap: pretty; }
 .work__wins li::marker { color: var(--clay); }
 /* 맨 앞에 오는 경력 블록만 왼쪽에 선을 세워 무게를 준다. */
 .work--lead {
   padding: 20px 0 20px 20px;
   border-top: 0; border-left: 2px solid var(--clay);
 }
-.work__link { margin: 14px 0 0; font-size: 13.5px; color: var(--ink-3); }
+.work__link { margin: 14px 0 0; font-size: var(--t-sm); color: var(--ink-3); }
 
 .edu__head {
   display: flex; align-items: baseline; justify-content: space-between;
   flex-wrap: wrap; gap: 6px 20px; margin-bottom: 12px;
 }
-.edu__head b { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
-.edu__head span { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
-.edu__note { margin: 0; font-size: 13px; color: var(--ink-3); }
+.edu__head b { display: inline-flex; align-items: center; gap: 8px; font-size: var(--t-lg); font-weight: 600; letter-spacing: var(--track-body); }
+.edu__head span { font-family: var(--font-mono); font-size: var(--t-2xs); color: var(--ink-3); }
+.edu__note { margin: 0; font-size: var(--t-xs); color: var(--ink-3); }
 
 @media (max-width: 900px) {
   /* 레일이 아래 가운데로 내려오므로 왼쪽 여백은 돌려주고 아래를 비운다. */
@@ -688,10 +796,12 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   .post-row__rail { flex-direction: row; gap: 10px; padding-top: 0; }
   .cards, .tiles { grid-template-columns: 1fr; }
   .row { grid-template-columns: 1fr; gap: 12px; }
-  .home-title { font-size: 32px; }
-  .post-title { font-size: 28px; }
+  /* h1 은 페이지마다 같은 크기이므로 좁은 화면에서도 한 값으로 줄인다. */
+  .home-title, .post-title, .page-title { font-size: var(--t-h1-sm); }
   .post-metrics { grid-template-columns: 1fr; }
-  body { font-size: 17px; }
+  /* 예전에는 body 만 17px 로 줄여, 정작 글 본문(.prose 19px)은 그대로였다.
+     읽는 본문을 줄이고 UI 는 기본 크기를 지킨다. */
+  .prose { font-size: var(--t-base); }
 }
 
 /* ── inline diagrams ────────────────────────────────────── */
@@ -703,12 +813,14 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   height: auto;
   margin: 32px 0;
   font-family: var(--font-sans);
+  /* 그림 안 글자는 좌표를 손으로 찍어 놓았다. 트래킹을 토큰으로 바꾸면 라벨 폭이
+     달라져 선 밖으로 삐져나온다. 여기만 고정값으로 못 박아 둔다. */
   letter-spacing: -0.01em;
 }
 .prose .diagram text { font-family: var(--font-sans); }
 .prose .diagram + .diagram-note {
   margin-top: -18px;
-  font-size: 13.5px;
+  font-size: var(--t-sm);
   color: var(--ink-3);
 }
 
@@ -724,3 +836,77 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   min-width: var(--diagram-min-w, 640px);
 }
 .prose .diagram-scroll + .diagram-note { margin-top: 10px; }
+
+/* ── 테마 전환 ──────────────────────────────────────────── */
+/* 라이트와 다크를 즉시 뒤집으면 화면 전체 밝기가 한 프레임에 튄다. 눈이 아프고,
+   무엇이 바뀌었는지 따라가기도 어렵다. 토글이 눌린 동안에만 색을 이어 준다.
+   평소에는 이 규칙이 없으므로 첫 페인트와 스크롤에는 아무 비용도 들지 않는다. */
+:root[data-theme-anim] *,
+:root[data-theme-anim] *::before,
+:root[data-theme-anim] *::after {
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    fill 220ms ease,
+    stroke 220ms ease !important;
+}
+
+/* ── 접근성: 세 가지 사용자 설정 ────────────────────────── */
+/* 앞 규칙들을 덮어야 하므로 파일 맨 끝에 둔다. */
+
+/* 1) 움직임 줄이기. 없애는 게 아니라 흔들리지 않는 답으로 바꾼다.
+      배율은 걷고 투명도로만 누른 걸 알린다. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  :root[data-theme-anim] *,
+  :root[data-theme-anim] *::before,
+  :root[data-theme-anim] *::after { transition: none !important; }
+
+  .dock__item:active,
+  .filter-bar button:active,
+  .tag-chip:active,
+  .code-block__copy:active,
+  .tile:active,
+  .post-nav a:active,
+  .post-row:active {
+    transform: none;
+    opacity: 0.72;
+    transition: none;
+  }
+}
+
+/* 2) 투명도 줄이기. 좁은 화면 도크가 유일한 반투명 면이다. 흐림을 걷고 불투명하게. */
+@media (prefers-reduced-transparency: reduce) {
+  .dock {
+    background: var(--surface);
+    backdrop-filter: none;
+  }
+}
+
+/* 3) 대비 높이기. 이 사이트는 0.5px 헤어라인으로 면을 나눈다. 대비를 올려 달라는
+      사람에게 0.5px 짜리 실선은 사실상 보이지 않으므로, 규칙을 진하게 하고
+      두 번째 세 번째 잉크도 본문 쪽으로 끌어올린다. */
+@media (prefers-contrast: more) {
+  :root {
+    --ink-2:     #2E3238;
+    --ink-3:     #5A6068;
+    --rule:      rgba(22, 24, 26, 0.45);
+    --rule-soft: rgba(22, 24, 26, 0.3);
+  }
+  :root[data-theme="dark"] {
+    --ink-2:     #E4E6EA;
+    --ink-3:     #B4BAC2;
+    --rule:      rgba(244, 245, 247, 0.5);
+    --rule-soft: rgba(244, 245, 247, 0.32);
+  }
+  /* 강조색도 글자 대비 기준을 다시 넘겨 둔다 */
+  :root { --clay-text: #14509E; }
+  :root[data-theme="dark"] { --clay-text: #9CC4FE; }
+
+  .post-row { border-bottom-width: 1px; }
+  .tile, .post-nav a, .code-block, .post-metrics, .prose figure img { border-width: 1px; }
+  .filter-bar button, .tag-chip, .work__stats > div { border-width: 1px; }
+  a:hover { text-decoration: underline; }
+}
