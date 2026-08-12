@@ -128,6 +128,27 @@ body {
   overflow-wrap: break-word;
 }
 
+/* 읽는 글의 오른쪽 끝을 맞춘다.
+   keep-all 로 띄어쓰기에서만 끊으니 줄 끝에 자리가 남는다. 본문에서 재 보니 평균
+   29px, 최대 93px 였다. 그 남는 자리를 그 줄의 띄어쓰기들이 나눠 가지면 오른쪽
+   끝이 붙는다. 늘어나는 것은 줄 끝이 남는 줄뿐이라, 문단의 마지막 줄과 한 줄짜리
+   문단은 그대로다.
+   넓은 화면에서만 켠다. 늘어나는 양은 그 줄에 띄어쓰기가 몇 개나 있느냐로 갈린다.
+   820px 칸(한 줄에 한글 40자, 띄어쓰기 12~17개)에서는 띄어쓰기가 평균 1.5배,
+   2배를 넘는 줄이 8% 다. 350px 칸(한 줄 19자, 띄어쓰기 3~6개)에서는 같은 여백을
+   서너 개가 나눠 가지느라 평균 3.0배, 2배를 넘는 줄이 71%, 최대 10배까지 갔다.
+   좁은 칸에서는 줄마다 구멍이 나므로 900px 이하는 왼쪽 정렬로 둔다.
+   text-justify 는 두지 않는다. inter-character 로 하면 자간이 대신 벌어져
+   띄어쓰기가 덜 늘지만(평균 1.5배 → 1.1배) 사파리가 이 속성을 모른다.
+   브라우저마다 조판이 갈리는 것보다 어디서나 같은 규칙인 편이 낫다.
+   제목·표·코드·목차는 넣지 않는다. 끝을 맞추는 것은 읽어 내려가는 글의 일이다. */
+@media (min-width: 901px) {
+  .post-lead, .home-lead, .page-lead, .home-note, .list-note,
+  .post-row p, .prose p, .prose li {
+    text-align: justify;
+  }
+}
+
 a { color: var(--clay-text); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
