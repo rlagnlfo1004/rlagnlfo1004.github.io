@@ -8,9 +8,9 @@ tags: ["결제", "DB 설계", "BigDecimal", "멱등성", "상태 머신", "MySQL
 
 ## [배경 - 다섯 줄을 읽고 제 코드가 걸렸다]
 
-Threads 에서 [결제 DB 설계에 관한 글](https://www.threads.com/share/BAX_j3-RCo/)을 봤습니다. bear_dba 님이 쓴 글이고, "결제 데이터인데 그냥 숫자 컬럼에 넣으면 안 되나요" 라는 질문에 답하는 형태였어요.
+결제 DB 설계 원칙을 다섯 줄로 정리한 글을 봤습니다. "결제 데이터인데 그냥 숫자 컬럼에 넣으면 안 되나요" 라는 질문에 답하는 형태였어요.
 
-요지를 다섯 줄로 정리하면 이렇습니다. 원문 표현을 그대로 옮긴 게 아니라 제가 이해한 대로 줄인 것이니, 정확한 문장은 위 링크를 보시는 게 좋습니다.
+제가 이해한 대로 줄이면 이렇습니다.
 
 1. 금액은 DECIMAL 로 잡는다. float 는 쓰지 않는다
 2. 상태 전이는 DB 제약으로 막는다
@@ -251,7 +251,7 @@ orderHistory.markStatus(fullyRefunded ? OhStatus.REFUND : OhStatus.PARTIAL_REFUN
 
 ### 두 겹으로 막을 수 있습니다
 
-Threads 글의 표현은 "DB 제약으로 막아라" 였어요. 저는 두 겹이 맞다고 생각합니다. 엔티티에서 막으면 에러 메시지를 제어할 수 있고, DB 에서 막으면 애플리케이션을 우회한 변경까지 걸립니다.
+원칙의 표현은 DB 제약으로 막으라는 것이었어요. 저는 두 겹이 맞다고 생각합니다. 엔티티에서 막으면 에러 메시지를 제어할 수 있고, DB 에서 막으면 애플리케이션을 우회한 변경까지 걸립니다.
 
 먼저 엔티티입니다.
 
@@ -524,5 +524,4 @@ private Long ohIdx;
 
 ## [참고 자료]
 
-- [결제 DB 설계에 관한 글](https://www.threads.com/share/BAX_j3-RCo/) bear_dba, Threads
 - [MySQL 8.0 CHECK 제약](https://dev.mysql.com/doc/refman/8.0/en/create-table-check-constraints.html) MySQL 공식 문서
