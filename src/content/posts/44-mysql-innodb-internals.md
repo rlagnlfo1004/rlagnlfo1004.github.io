@@ -28,19 +28,13 @@ tags: ["MySQL", "InnoDB", "CS", "인덱스", "MVCC", "면접"]
 
 MySQL의 특이한 점은 스토리지 엔진을 갈아 끼울 수 있다는 겁니다. 이 구조가 성능 특성의 많은 부분을 설명해요.
 
-```
- ┌─────────────────────────────────────────────┐
- │  서버 계층                                    │
- │   커넥션 관리 → 파서 → 옵티마이저 → 실행기      │
- │   (8.0 부터 쿼리 캐시는 제거됐다)              │
- └────────────────────┬────────────────────────┘
-                      │  핸들러 API
-                      │  "이 조건으로 다음 행을 줘"
- ┌────────────────────▼────────────────────────┐
- │  스토리지 엔진 계층 (InnoDB)                   │
- │   버퍼 풀, B+Tree, redo/undo, 락, MVCC        │
- └─────────────────────────────────────────────┘
-```
+<figure class="mermaid-figure">
+<pre class="mermaid-src">flowchart TB
+  server["서버 계층&lt;br/>커넥션 관리 → 파서 → 옵티마이저 → 실행기&lt;br/>(8.0 부터 쿼리 캐시는 제거됐다)"]:::accent
+  engine["스토리지 엔진 계층 (InnoDB)&lt;br/>버퍼 풀 · B+Tree · redo/undo · 락 · MVCC"]:::neutral
+  server -->|"핸들러 API — 이 조건으로 다음 행을 줘"| engine
+</pre>
+</figure>
 
 옵티마이저는 엔진에게 통계를 물어보고 실행 계획을 세운 뒤, 핸들러 API로 행을 하나씩 받아옵니다. 이 경계가 중요한 이유는 **경계를 넘어오는 행이 많을수록 비싸기** 때문이에요.
 
@@ -68,15 +62,31 @@ InnoDB가 디스크와 메모리 사이에서 주고받는 최소 단위는 **�
 
 **둘째, 리프 노드끼리 이중 연결 리스트로 이어져 있습니다.** 범위 스캔이 여기서 나와요. `WHERE created_at BETWEEN a AND b` 는 시작 지점을 트리로 찾은 뒤 리프를 옆으로 훑습니다. 트리를 다시 타고 내려올 필요가 없어요.
 
-```
-                    [ 100 | 200 ]              ← 루트
-                   /      |      \
-        [10|50]        [120|160]      [250|300]   ← 브랜치
-        /  |  \         /  |  \        /  |  \
-     [리프]─[리프]─[리프]─[리프]─[리프]─[리프]─[리프]   ← 리프끼리 연결
-       ↑                                    ↑
-       └──────────  범위 스캔은 이 줄을 따라간다 ──┘
-```
+<figure class="mermaid-figure">
+<pre class="mermaid-src">flowchart TB
+  root["루트 · 100 | 200"]:::accent
+  b1["브랜치 · 10 | 50"]:::neutral
+  b2["브랜치 · 120 | 160"]:::neutral
+  b3["브랜치 · 250 | 300"]:::neutral
+  root --> b1
+  root --> b2
+  root --> b3
+  b1 --> L1
+  b1 --> L2
+  b2 --> L3
+  b2 --> L4
+  b3 --> L5
+  b3 --> L6
+  subgraph leaves ["리프 — 이중 연결 리스트 · 범위 스캔은 이 줄을 따라간다"]
+    L1["리프"]:::soft
+    L2["리프"]:::soft
+    L3["리프"]:::soft
+    L4["리프"]:::soft
+    L5["리프"]:::soft
+    L6["리프"]:::soft
+  end
+</pre>
+</figure>
 
 ### 그리고 테이블 자체가 이 트리입니다
 
@@ -156,11 +166,18 @@ PK를 안 만들면 InnoDB가 대신 만듭니다. 유니크한 NOT NULL 인덱�
 
 InnoDB는 LRU 리스트를 두 구역으로 나눠서 이걸 막습니다.
 
-```
- [ ============ new (young) 5/8 ============ | ==== old 3/8 ==== ]
-   ↑ 자주 쓰이는 페이지                          ↑ 새로 읽힌 페이지는 여기로
-                                                  (리스트의 맨 앞이 아니다)
-```
+<figure class="mermaid-figure">
+<pre class="mermaid-src">flowchart LR
+  read["새로 읽은 페이지"]:::soft
+  subgraph LRU["버퍼 풀 LRU 리스트"]
+    direction LR
+    new["new / young  ·  약 63%&lt;br/>자주 쓰이는 페이지"]:::accent
+    old["old  ·  약 37%&lt;br/>새로 읽힌 페이지가 여기 (midpoint)"]:::mute
+  end
+  read -->|"맨 앞이 아니라 midpoint 로"| old
+  old -->|"1초 뒤 다시 접근되면 승격"| new
+</pre>
+</figure>
 
 새로 읽은 페이지는 리스트 맨 앞이 아니라 **중간 지점(midpoint)에 들어갑니다.** 기본적으로 old 구역이 전체의 약 37%예요(`innodb_old_blocks_pct` 기본값 37). 그리고 여기서 한 번 더 거릅니다.
 
@@ -228,19 +245,18 @@ redo가 "다시 하기"라면 undo는 "되돌리기"예요. 행을 고치기 전
 
 여기서 두 번째 질문의 답이 나옵니다. **긴 트랜잭션이 왜 서버 전체를 느리게 만드는가.**
 
-```
-트랜잭션 A : 09:00 에 시작, REPEATABLE READ, 아직 안 끝남
-             ← A 는 09:00 시점의 데이터를 봐야 한다
-             ← 그러니 09:00 이후의 모든 옛 버전을 지울 수 없다
-
-그동안 다른 트랜잭션들이 계속 UPDATE 를 한다
-             ← undo 가 계속 쌓인다
-             ← purge 가 아무것도 못 지운다
-             ← History list length 가 자란다
-
-결과 : 특정 행을 읽으려면 undo 체인을 수만 개 거슬러 올라가야 한다
-       디스크 사용량도 계속 는다
-```
+<figure class="mermaid-figure">
+<pre class="mermaid-src">flowchart TB
+  A["트랜잭션 A · 09:00 시작&lt;br/>REPEATABLE READ · 아직 안 끝남"]:::accent
+  A --> keep["A 는 09:00 시점 데이터를 봐야 한다&lt;br/>→ 09:00 이후의 옛 버전을 지울 수 없다"]:::soft
+  upd["그동안 다른 트랜잭션들이 계속 UPDATE"]:::neutral
+  upd --> pile["undo 가 계속 쌓인다"]:::warn
+  keep --> stuck["purge 가 아무것도 못 지운다"]:::warn
+  pile --> stuck
+  stuck --> hist["History list length 가 자란다"]:::warn
+  hist --> cost["행 하나 읽는 데 undo 체인을 수만 개 거슬러 오른다&lt;br/>디스크 사용량도 계속 는다"]:::warn
+</pre>
+</figure>
 
 **A는 아무것도 안 하고 있어도 됩니다.** 커넥션을 열어둔 채 트랜잭션만 안 닫으면 이 일이 벌어져요. `SHOW ENGINE INNODB STATUS` 의 History list length가 이 지표입니다.
 
@@ -349,11 +365,21 @@ READ COMMITTED로 낮추면 갭 락이 대부분 사라집니다. 동시성은 �
 
 갭 락은 데드락의 흔한 원인이기도 합니다. 특히 이 조합이요.
 
-```
-트랜잭션 A : INSERT INTO t (unique_col) VALUES ('x');   -- 아직 커밋 안 함
-트랜잭션 B : INSERT INTO t (unique_col) VALUES ('x');   -- 중복이라 대기
-트랜잭션 A : 롤백
-```
+<figure class="mermaid-figure">
+<pre class="mermaid-src">sequenceDiagram
+  participant A as 트랜잭션 A
+  participant B as 트랜잭션 B
+  A->>A: INSERT unique_col='x' — 아직 커밋 안 함
+  B->>A: INSERT unique_col='x' (같은 값)
+  rect rgba(217,61,66,0.12)
+    Note over B: 중복이라 A 가 끝날 때까지 대기
+  end
+  A->>A: 롤백
+  A-->>B: 대기 해제
+  Note over B: B 성공
+  Note over A,B: 이 대기 중 A 가 다른 락을 기다리면 → 데드락
+</pre>
+</figure>
 
 B는 A가 끝날 때까지 기다립니다. A가 롤백하면 B가 성공해요. 이 대기 중에 A가 다른 락을 기다리면 데드락입니다.
 

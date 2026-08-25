@@ -905,6 +905,87 @@ mark { background: var(--mark); color: var(--ink); padding: 1px 3px; border-radi
   color: var(--ink-3);
 }
 
+/* ── mermaid diagrams ───────────────────────────────────── */
+/* 본문에 <pre class="mermaid-src"> 로 심고, src/scripts/mermaid.ts 가 그려서
+   .mermaid-canvas 로 바꾼다. 색은 스크립트가 토큰에서 읽어 넣으므로 손 SVG 처럼
+   테마에 반응한다. 렌더 전에는 원본 소스를 감추고 자리만 잡아 둔다. */
+.prose .mermaid-figure {
+  position: relative;
+  margin: 32px 0;
+  border: 0.5px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+.prose .mermaid-src { display: none; }
+.prose .mermaid-figure:not([data-rendered]) { min-height: 96px; }
+.prose .mermaid-figure:not([data-rendered])::before {
+  content: "다이어그램 그리는 중…";
+  display: grid; place-items: center; min-height: 96px;
+  font-size: var(--t-sm); color: var(--ink-3);
+}
+.prose .mermaid-canvas {
+  padding: 24px 18px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.prose .mermaid-canvas.is-zoomable { cursor: zoom-in; }
+.prose .mermaid-canvas svg {
+  display: block; margin: 0 auto; max-width: 100%; height: auto;
+}
+.prose .mermaid-canvas text { font-family: var(--font-sans); }
+/* 아이콘 두 개를 그림 오른쪽 위에 띄운다. 평소엔 옅게, 그림에 손이 가면 또렷하게.
+   손가락 기기(hover 불가)에서는 늘 보이게 둔다. */
+.prose .mermaid-tools {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  display: inline-flex; gap: 6px;
+  opacity: 0.4; transition: opacity 150ms;
+}
+.prose .mermaid-figure:hover .mermaid-tools,
+.prose .mermaid-figure:focus-within .mermaid-tools { opacity: 1; }
+@media (hover: none) { .prose .mermaid-tools { opacity: 0.85; } }
+.prose .mermaid-btn {
+  display: inline-grid; place-items: center; width: 32px; height: 32px;
+  cursor: pointer; color: var(--ink-2);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  border: 0.5px solid var(--rule); border-radius: 9px;
+  box-shadow: 0 1px 3px var(--cast);
+  -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px);
+  transition: color 130ms, background 130ms, border-color 130ms, transform 90ms;
+}
+.prose .mermaid-btn__ico { width: 16px; height: 16px; display: block; }
+.prose .mermaid-btn:hover {
+  color: var(--ink); border-color: var(--ink-3);
+  background: color-mix(in srgb, var(--sunk) 92%, transparent);
+}
+.prose .mermaid-btn:active { transform: translateY(0.5px); }
+.prose .mermaid-btn[data-copied] {
+  color: var(--clay-text); border-color: var(--clay);
+  background: var(--clay-soft);
+}
+.prose .mermaid-btn[data-copied="err"] {
+  color: var(--ink-2); border-color: var(--ink-3); background: var(--sunk);
+}
+
+/* 그림을 눌렀을 때 뜨는 확대 오버레이. 어두운 스크림 위에 그림만 크게 올린다. */
+.mermaid-lightbox {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center; padding: 4vmin;
+  background: rgba(8, 10, 14, 0.74);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  cursor: zoom-out;
+  animation: mermaid-fade 140ms ease-out;
+}
+.mermaid-lightbox__panel {
+  max-width: 94vw; max-height: 92vh; overflow: auto;
+  padding: 20px; border-radius: 14px;
+  background: var(--surface); border: 0.5px solid var(--rule);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);
+}
+.mermaid-lightbox__panel svg { display: block; }
+@keyframes mermaid-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mermaid-lightbox { animation: none; } }
+
 /* 시퀀스 다이어그램처럼 가로로 긴 그림은 좁은 화면에서 통째로 줄이면 글자가 읽히지
    않는다. 래퍼로 감싸 원래 폭을 유지한 채 그림만 가로 스크롤시킨다. */
 .prose .diagram-scroll {

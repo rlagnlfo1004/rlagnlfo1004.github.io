@@ -231,5 +231,11 @@ const ogImage = new URL(OG_IMAGE, Astro.site);
         pre.setAttribute("data-lines", "");
       });
     </script>
+
+    {/* mermaid 다이어그램: .mermaid-figure 가 있는 글에서만 지연 로드해 그린다.
+        이미지 복사 · 코드 복사 · 테마 재렌더는 스크립트 안에 있다. */}
+    <script>
+      import "../scripts/mermaid.ts";
+    </script>
   </body>
 </html>
