@@ -59,7 +59,19 @@ byte[] video = restClient.get().uri(url).retrieve().body(byte[].class);
 
 숫자 자체보다 무서운 건 **그 숫자를 우리가 정하지 않는다**는 점이었어요. 원본 용량은 강의를 찍은 쪽이 정하고, 관리자는 링크만 붙여 넣어요. 300MB 짜리가 섞여 들어오면 힙 계산이 그대로 무너집니다.
 
-G1 을 쓰고 있어서 한 가지가 더 걸렸어요. G1 은 힙을 region 으로 쪼개 쓰고, region 크기의 절반을 넘는 배열은 humongous 로 따로 다뤄요. region 크기를 지정하지 않았으니 기본식(힙을 2048 로 나누고 1MB 를 하한으로 둡니다)대로 1MB 가 되고, 그러면 humongous 문턱은 512KB 입니다. 137MB 배열은 문턱의 274배예요. humongous 는 연속된 region 을 요구하고 젊은 영역의 회수 대상이 아니라서, 이런 배열이 오가면 [52번 글](/posts/52-jvm-gc-stw-and-cold-start/)에서 다룬 종류의 문제가 생깁니다.
+G1 을 쓰고 있어서 한 가지가 더 걸렸어요. G1 은 힙을 region 으로 쪼개 쓰고, **region 크기의 절반을 넘는 배열은 humongous 로 따로 다룹니다.** region 크기를 우리가 지정하지 않았으니 JVM 이 알아서 정하는데, 얼마로 정하는지는 계산하지 말고 물어봤어요.
+
+```
+$ java -Xms512m -Xmx1536m -XX:+UseG1GC -XX:+PrintFlagsFinal -version \
+    | grep -E 'G1HeapRegionSize|MaxHeapSize'
+
+size_t G1HeapRegionSize = 1048576    {product} {ergonomic}
+size_t MaxHeapSize      = 1610612736 {product} {command line}
+```
+
+**region 이 1MB 이니 humongous 문턱은 512KB 입니다.** 137MB 배열은 그 문턱의 274배예요. humongous 는 연속된 region 을 요구하고 젊은 영역의 회수 대상이 아니라서, 이런 배열이 오가면 [52번 글](/posts/52-jvm-gc-stw-and-cold-start/)에서 다룬 종류의 문제가 생깁니다.
+
+한 겹은 밝혀 둘게요. 이 값은 배포 이미지(`eclipse-temurin:17-jre-jammy`)와 같은 벤더, 같은 메이저인 로컬 Temurin 17.0.11 에서 뜬 것이고 **dev 컨테이너 안에서 뜬 값은 아니에요.** `-Xmx` 를 명시하고 있어 컨테이너 메모리 제한이 이 값을 흔들 이유는 없다고 보지만, 확인한 것과 확인하지 않은 것은 구분해 둡니다.
 
 <svg class="diagram" viewBox="0 0 720 252" role="img" aria-label="힙 상한 1536MB 를 720픽셀 눈금으로 그린 막대 두 개. 위는 원본을 배열로 받아 274MB 를 차지하는 안, 아래는 임시 파일로 흘려보내 힙에 복사 버퍼만 남는 안">
   <text x="0" y="14" font-size="13" font-weight="600" fill="var(--ink-2, #545A64)">막대 하나가 힙 상한이다. 눈금은 720픽셀을 1536MB 에 맞췄다</text>
