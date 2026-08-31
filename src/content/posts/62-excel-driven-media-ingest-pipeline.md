@@ -75,7 +75,6 @@ size_t MaxHeapSize      = 1610612736 {product} {command line}
 
 <svg class="diagram" viewBox="0 0 720 252" role="img" aria-label="힙 상한 1536MB 를 720픽셀 눈금으로 그린 막대 두 개. 위는 원본을 배열로 받아 274MB 를 차지하는 안, 아래는 임시 파일로 흘려보내 힙에 복사 버퍼만 남는 안">
   <text x="0" y="14" font-size="13" font-weight="600" fill="var(--ink-2, #545A64)">막대 하나가 힙 상한이다. 눈금은 720픽셀을 1536MB 에 맞췄다</text>
-
   <text x="0" y="44" font-size="11.5" font-weight="700" fill="var(--ink-3, #8B9099)">버린 안, 응답을 배열로 전량 받기</text>
   <rect x="0" y="54" width="720" height="34" rx="6" fill="var(--bg, #FFFFFF)" stroke="var(--rule, rgba(22,24,26,.09))" stroke-width="1"/>
   <rect x="0" y="54" width="64" height="34" rx="6" fill="var(--clay-soft, #EAF2FE)" stroke="var(--clay, #3182F6)" stroke-width="1.2"/>
@@ -84,13 +83,11 @@ size_t MaxHeapSize      = 1610612736 {product} {command line}
   <text x="76" y="84" font-size="10.5" font-family="var(--font-mono)" fill="var(--clay-text, #1B64DA)">137MB x 2 = 274MB</text>
   <text x="716" y="70" font-size="10.5" text-anchor="end" font-family="var(--font-mono)" fill="var(--ink-3, #8B9099)">-Xmx1536m</text>
   <text x="716" y="84" font-size="10" text-anchor="end" fill="var(--ink-3, #8B9099)">용량은 관리자가 정한다</text>
-
   <text x="0" y="130" font-size="11.5" font-weight="700" fill="var(--clay-text, #1B64DA)">채택, 임시 파일로 흘려보내기</text>
   <rect x="0" y="140" width="720" height="34" rx="6" fill="var(--bg, #FFFFFF)" stroke="var(--clay, #3182F6)" stroke-width="1.2"/>
   <rect x="0" y="140" width="5" height="34" rx="2" fill="var(--clay, #3182F6)"/>
   <rect x="7" y="140" width="5" height="34" rx="2" fill="var(--clay, #3182F6)"/>
   <text x="22" y="161" font-size="10.5" fill="var(--ink-2, #545A64)">힙에 남는 것은 8KB 복사 버퍼뿐이다. 원본 용량과 무관하다</text>
-
   <rect x="0" y="196" width="720" height="28" rx="6" fill="var(--sunk, #F1F3F6)" stroke="var(--rule, rgba(22,24,26,.09))" stroke-width="1"/>
   <rect x="0" y="196" width="64" height="28" rx="6" fill="var(--surface, #FAFAFB)" stroke="var(--ink-3, #8B9099)" stroke-width="1"/>
   <line x1="32" y1="196" x2="32" y2="224" stroke="var(--ink-3, #8B9099)" stroke-width="1"/>
