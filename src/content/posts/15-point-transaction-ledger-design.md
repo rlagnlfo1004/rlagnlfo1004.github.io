@@ -2,7 +2,7 @@
 title: "point_transaction 은 왜 이렇게 생겼나 (재화 도메인의 원장 설계)"
 description: "잔액 컬럼 하나면 될 것 같았던 포인트가 테이블 다섯 개가 됐습니다. append-only 원장, lot 명세 분리, 스냅샷 컬럼이 각각 무엇을 막고 있는지."
 date: 2026-08-07
-project: "케이톡"
+project: "코리안쌤"
 tags: ["재화 설계", "원장", "데이터 모델링", "JPA", "스냅샷"]
 ---
 

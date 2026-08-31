@@ -2,7 +2,7 @@
 title: "결제에 웹훅이 왜 필요한가 (앱이 죽어도 포인트는 들어와야 한다)"
 description: "앱→서버 충전 요청만으로는 결제가 유실됩니다. 스토어 웹훅을 두 번째 경로로 붙이면서 정리한 도착 순서 여섯 가지와, 웹훅이 대체재가 아닌 이유."
 date: 2026-08-07
-project: "케이톡"
+project: "코리안쌤"
 tags: ["웹훅", "결제", "RTDN", "App Store Server Notification", "Spring"]
 ---
 

@@ -6,7 +6,7 @@ const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-const order = ["케이톡", "레인보우TV", "아주이벤트", "메일상자", "아올다 클라우드", "선착순예매", "공통", "회고"];
+const order = ["코리안쌤", "레인보우TV", "아주이벤트", "메일상자", "아올다 클라우드", "선착순예매", "공통", "회고"];
 
 const projectCounts = new Map<string, number>();
 posts.forEach((p) => projectCounts.set(p.data.project, (projectCounts.get(p.data.project) ?? 0) + 1));

@@ -2,7 +2,7 @@
 title: "왕복이 맞아떨어져서 아무도 못 본 9시간 (JVM UTC vs 커넥션 KST)"
 description: "JVM은 UTC인데 JDBC 커넥션만 Asia/Seoul이었습니다. 쓸 때 +9, 읽을 때 -9라 애플리케이션 안에서는 증상이 없었어요. 임시 테이블로 물리값을 직접 확인하고 126개 컬럼을 옮기기까지."
 date: 2026-08-13
-project: "케이톡"
+project: "코리안쌤"
 tags: ["MySQL", "JDBC", "타임존", "Hibernate", "Connector/J", "마이그레이션"]
 ---
 
