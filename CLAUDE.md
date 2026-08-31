@@ -36,14 +36,36 @@ Astro 5 기술 블로그. 글은 `src/content/posts/NN-slug.md`, 토큰과 조�
 39종 다이어그램 타입 레퍼런스 + 취향 게이트 + 기하 검증 스크립트를 갖고 있습니다.
 
 **스킨은 이미 이 프로젝트에 묶여 있습니다.** 저장소 루트의 `.diagram-design` 마커가
-`~/.diagram-design/profiles/looksgood-blog.md` 프로필을 가리키고, 그 프로필이 `global.css` 토큰을
-스킬의 시맨틱 롤(`paper` / `ink` / `accent` …)에 매핑해 둡니다. 그래서:
+`looksgood-blog` 프로필을 가리키고, 그 프로필이 `global.css` 토큰을 스킬의 시맨틱
+롤(`paper` / `ink` / `accent` …)에 매핑해 둡니다. 그래서:
 
 - 첫 실행 브랜딩 질문(onboarding gate)이 **뜨지 않습니다.** 뜨면 마커가 깨진 것이니 고치세요.
 - 스킬이 기본으로 내보내는 **Instrument Serif / Geist / Geist Mono 와 Google Fonts `<link>` 는 이 블로그에서 금지**입니다.
   서체는 Pretendard + JetBrains Mono 둘뿐입니다.
-- `global.css` 토큰을 손대면 프로필도 같이 고칩니다: `/diagram-design:profile update looksgood-blog`.
-  **`global.css` 가 원본이고 프로필이 사본입니다.**
+- `global.css` 토큰을 손대면 프로필도 같이 고칩니다: `/diagram-design:profile update looksgood-blog`
+  → `npm run diagram:profile save`. **`global.css` 가 원본이고 프로필이 사본입니다.**
+
+### 프로필 사본이 둘인 이유
+
+스킬은 프로필을 `~/.diagram-design/profiles/<slug>.md` 에서만 읽습니다(플러그인 업데이트가 설치본을
+덮어써도 스킨이 살아남게 하려는 규약). 그런데 홈에만 두면 다른 기기에서 클론했을 때 스킨이 없습니다.
+루트 `.diagram-design` 은 "이 프로필을 써라"는 **포인터 한 줄**이라 실물이 따라오지 않으니까요.
+
+그래서 **저장소가 원본, 홈이 설치본**입니다.
+
+| | 경로 | 역할 |
+|---|---|---|
+| 포인터 | `.diagram-design` | `profile: looksgood-blog` 한 줄 |
+| 원본 | `.claude/diagram-design/looksgood-blog.md` | 커밋되는 실물 |
+| 설치본 | `~/.diagram-design/profiles/looksgood-blog.md` | 스킬이 실제로 읽는 곳 |
+
+```
+npm run diagram:profile          # 저장소 → 홈. 새 기기에서 클론한 뒤 한 번
+npm run diagram:profile save     # 홈 → 저장소. /diagram-design:profile update 를 돌린 뒤
+```
+
+두 사본이 다르면 스크립트가 **말없이 덮어쓰지 않고 멈춥니다.** 어느 쪽이 최신인지 보고
+`-- --force` 로 방향을 정하세요.
 
 ### 글에 넣는 순서
 
