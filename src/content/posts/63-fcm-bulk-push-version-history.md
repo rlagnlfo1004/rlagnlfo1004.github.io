@@ -30,11 +30,17 @@ Firebase Admin SDK의 `sendEachAsync()`는 원래 비동기입니다. 그런데 
 
 스레드 덤프를 떠 보면 `Future.get()`에서 `WAITING`인 Tomcat 스레드와, 실제 HTTP를 보내는 Firebase 스레드가 같은 수만큼 늘어나 있었습니다. 발송 1건이 스레드 2개를 잡고 있었던 거예요. FCM이 느려지면 발송과 상관없는 API까지 같이 느려집니다.
 
+<img src="/diagrams/63/v1-sync.svg" alt="v1 동기 발송 구조: Tomcat 스레드와 Firebase 스레드가 1대1로 묶인다" loading="lazy" style="width:100%;height:auto;border-radius:8px" />
+
+
 ### v2: 콜백으로 바꿨더니 또 막힘
 
 `ApiFutures.addCallback()`으로 바꿔 요청 스레드는 바로 돌려보냈습니다. 그런데 콜백을 실행할 스레드를 지정하지 않으니, 콜백이 FCM 응답을 받은 Firebase 스레드에서 그대로 돌았어요. 그 콜백 안에 DB 저장이 있었습니다.
 
 전송 스레드가 DB 커넥션을 기다리는 동안 다음 메시지를 못 보냅니다. k6 200 VU에서 웹훅 API P95가 **5,240ms**까지 올랐어요.
+
+<img src="/diagrams/63/v2-callback.svg" alt="v2 콜백 전환 구조: 콜백의 DB 저장이 Firebase 전송 스레드에서 실행된다" loading="lazy" style="width:100%;height:auto;border-radius:8px" />
+
 
 ### v3: 콜백이 돌 스레드를 따로 지정
 
@@ -43,6 +49,9 @@ ApiFutures.addCallback(future, callback, fcmCallbackExecutor);
 ```
 
 세 번째 인자 하나로 DB 저장을 전용 풀로 옮겼습니다. 같은 조건에서 P95가 **2,530ms**로 내려갔어요.
+
+<img src="/diagrams/63/v3-callback-pool.svg" alt="v3 콜백 전용 풀 구조: DB 저장을 fcm-callback 풀이 맡는다" loading="lazy" style="width:100%;height:auto;border-radius:8px" />
+
 
 ## [v4 - 스레드 수가 곧 처리량]
 
@@ -87,6 +96,9 @@ v4 설정은 core 32, max 128, 큐 50,000이었습니다. 숫자만 보면 128�
 
 4번에서 이미 받은 사람이 한 번 더 받습니다. **보냈는데 기록이 없는 상태**를 시스템이 "안 보냈다"로 해석한 거예요.
 
+<img src="/diagrams/63/v4-queue-trap.svg" alt="v4 큐 50,000의 함정: 거절 뒤 콜백이 등록되지 않아 폴링이 재발송하고 중복이 생긴다" loading="lazy" style="width:100%;height:auto;border-radius:8px" />
+
+
 ### 중복은 모의 FCM에서 직접 셌습니다
 
 실제 FCM으로는 사용자가 몇 번 받았는지 알 수 없습니다. 그래서 SDK의 `HttpTransport`를 모의 구현으로 바꿔 모든 발송 요청을 받아 봤어요. 요청마다 110ms를 기다린 뒤 성공을 돌려주게 했습니다. 110ms는 v4 실측 범위의 가운데 값이에요.
@@ -103,68 +115,9 @@ v4 설정은 core 32, max 128, 큐 50,000이었습니다. 숫자만 보면 128�
 
 ### 풀을 역할별로 셋으로 나눴습니다
 
-<div class="diagram-scroll" style="--diagram-min-w: 720px">
-<svg class="diagram" viewBox="0 0 720 400" role="img" aria-label="웹훅 요청 스레드가 dispatch 풀에 넘기고, dispatch가 Semaphore 허가를 얻어 전송 풀에 제출하고, 응답을 callback 풀이 DB에 저장한 뒤 허가를 반납하는 구조">
-  <defs>
-    <marker id="d63a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--ink-3, #8B9099)"/></marker>
-    <marker id="d63b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--clay, #3182F6)"/></marker>
-  </defs>
-  <text x="0" y="16" font-size="13" font-weight="600" fill="var(--ink-2, #545A64)">요청은 바로 돌려보내고, 진행 중인 배치는 3개까지만 둔다</text>
+<img src="/diagrams/63/v5-architecture.svg" alt="v5 구조: dispatch, 전송, callback 세 풀과 Semaphore 허가 흐름" loading="lazy" style="width:100%;height:auto;border-radius:8px" />
 
-  <rect x="0" y="50" width="120" height="84" rx="6" fill="var(--sunk, #F1F3F6)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="12" y="74" font-size="12" font-weight="700" fill="var(--ink, #16181A)">웹훅 요청</text>
-  <text x="12" y="94" font-size="10.5" fill="var(--ink-2, #545A64)">Tomcat 스레드</text>
-  <text x="12" y="116" font-size="10.5" fill="var(--ink-2, #545A64)">넘기고 바로 응답</text>
-  <line x1="120" y1="92" x2="154" y2="92" stroke="var(--ink-3, #8B9099)" marker-end="url(#d63a)"/>
-
-  <rect x="158" y="40" width="160" height="150" rx="6" fill="var(--sunk, #F1F3F6)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="170" y="62" font-size="12" font-weight="700" fill="var(--ink, #16181A)">fcm-dispatch</text>
-  <text x="170" y="80" font-size="10.5" font-family="var(--font-mono)" fill="var(--ink-2, #545A64)">2 / queue 100</text>
-  <rect x="170" y="92" width="136" height="24" rx="4" fill="var(--clay-soft, #EAF2FE)" stroke="var(--clay, #3182F6)"/>
-  <text x="178" y="108" font-size="10.5" fill="var(--clay-text, #1B64DA)">① 허가 얻기 (최대 300초)</text>
-  <rect x="170" y="122" width="136" height="24" rx="4" fill="var(--bg, #FFFFFF)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="178" y="138" font-size="10.5" fill="var(--ink-2, #545A64)">② 토큰 행 잠금 선점</text>
-  <rect x="170" y="152" width="136" height="24" rx="4" fill="var(--bg, #FFFFFF)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="178" y="168" font-size="10.5" fill="var(--ink-2, #545A64)">③ sendEachAsync</text>
-  <line x1="318" y1="164" x2="356" y2="164" stroke="var(--ink-3, #8B9099)" marker-end="url(#d63a)"/>
-  <text x="322" y="156" font-size="10" fill="var(--ink-3, #8B9099)">400건</text>
-
-  <rect x="360" y="40" width="200" height="170" rx="6" fill="var(--sunk, #F1F3F6)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="372" y="62" font-size="12" font-weight="700" fill="var(--ink, #16181A)">fcm-default (SDK 전송)</text>
-  <text x="372" y="80" font-size="10.5" font-family="var(--font-mono)" fill="var(--ink-2, #545A64)">core=max 200 / queue 2,000</text>
-  <g fill="var(--clay, #3182F6)">
-    <circle cx="380" cy="102" r="5"/><circle cx="396" cy="102" r="5"/><circle cx="412" cy="102" r="5"/><circle cx="428" cy="102" r="5"/><circle cx="444" cy="102" r="5"/><circle cx="460" cy="102" r="5"/><circle cx="476" cy="102" r="5"/><circle cx="492" cy="102" r="5"/><circle cx="508" cy="102" r="5"/><circle cx="524" cy="102" r="5"/><circle cx="540" cy="102" r="5"/>
-    <circle cx="380" cy="118" r="5"/><circle cx="396" cy="118" r="5"/><circle cx="412" cy="118" r="5"/><circle cx="428" cy="118" r="5"/><circle cx="444" cy="118" r="5"/><circle cx="460" cy="118" r="5"/><circle cx="476" cy="118" r="5"/><circle cx="492" cy="118" r="5"/><circle cx="508" cy="118" r="5"/><circle cx="524" cy="118" r="5"/><circle cx="540" cy="118" r="5"/>
-  </g>
-  <text x="372" y="146" font-size="10.5" fill="var(--ink-2, #545A64)">메시지 1건이 응답까지</text>
-  <text x="372" y="162" font-size="10.5" fill="var(--ink-2, #545A64)">스레드 1개를 잡는다</text>
-  <text x="372" y="192" font-size="10.5" font-family="var(--font-mono)" fill="var(--ink-2, #545A64)">1,700/s × 0.1s ≈ 170</text>
-
-  <rect x="600" y="70" width="120" height="100" rx="6" fill="var(--bg, #FFFFFF)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="644" y="116" font-size="12" font-weight="700" fill="var(--ink, #16181A)">FCM</text>
-  <text x="624" y="136" font-size="10.5" fill="var(--ink-2, #545A64)">왕복 약 100ms</text>
-  <line x1="560" y1="104" x2="596" y2="104" stroke="var(--ink-3, #8B9099)" marker-end="url(#d63a)"/>
-  <line x1="596" y1="140" x2="564" y2="140" stroke="var(--ink-3, #8B9099)" marker-end="url(#d63a)"/>
-
-  <rect x="360" y="262" width="200" height="90" rx="6" fill="var(--sunk, #F1F3F6)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="372" y="284" font-size="12" font-weight="700" fill="var(--ink, #16181A)">fcm-callback (결과 저장)</text>
-  <text x="372" y="302" font-size="10.5" font-family="var(--font-mono)" fill="var(--ink-2, #545A64)">4 / queue 100</text>
-  <text x="372" y="324" font-size="10.5" fill="var(--ink-2, #545A64)">DB 커넥션 10개 중</text>
-  <text x="372" y="340" font-size="10.5" fill="var(--ink-2, #545A64)">웹 요청 몫을 남긴다</text>
-  <line x1="460" y1="210" x2="460" y2="258" stroke="var(--ink-3, #8B9099)" marker-end="url(#d63a)"/>
-  <text x="468" y="238" font-size="10" fill="var(--ink-3, #8B9099)">addCallback(…, callbackExecutor)</text>
-
-  <rect x="158" y="272" width="140" height="70" rx="6" fill="var(--bg, #FFFFFF)" stroke="var(--rule, rgba(22,24,26,.09))"/>
-  <text x="212" y="304" font-size="12" font-weight="700" fill="var(--ink, #16181A)">DB</text>
-  <text x="172" y="324" font-size="10.5" fill="var(--ink-2, #545A64)">토큰 결과 상태</text>
-  <line x1="360" y1="307" x2="302" y2="307" stroke="var(--ink-3, #8B9099)" marker-end="url(#d63a)"/>
-
-  <path d="M560 340 C 640 340, 650 390, 560 390 L 250 390 C 210 390, 200 360, 238 194" fill="none" stroke="var(--clay, #3182F6)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#d63a)"/>
-  <text x="340" y="384" font-size="10.5" fill="var(--clay-text, #1B64DA)">④ 저장이 끝나면 허가 반납 → 다음 배치</text>
-</svg>
-</div>
-
-<p class="diagram-note">파란 점선이 Semaphore 허가입니다. dispatch 스레드가 얻고 callback 스레드가 돌려줍니다.</p>
+<p class="diagram-note">보라색 점선이 Semaphore 허가입니다. dispatch 스레드가 얻고 callback 스레드가 돌려줍니다.</p>
 
 일의 성격이 다른 세 가지를 각자의 풀로 나눴습니다.
 
@@ -232,6 +185,9 @@ public boolean sendBatchAsync(Supplier<PreparedBatch> prepare) throws Interrupte
 허가 4: 5 × 500 = 2,500 > 2,200  기동 실패
 ```
 
+<img src="/diagrams/63/v5-permit-math.svg" alt="허가 3장의 근거: 스레드를 채우는 아래쪽 한계와 거절을 막는 위쪽 한계" loading="lazy" style="width:100%;height:auto;border-radius:8px" />
+
+
 500은 `sendEach` 한 번의 최대 메시지 수입니다. 실제 배치는 400건이지만 최악을 가정했어요. **+1은 매주 일요일 새벽에 도는 토큰 정리 작업**입니다. 앱을 지운 기기의 토큰을 찾으려고 FCM에 dryRun으로 400건씩 보내 보는데, 같은 전송 풀을 쓰면서 Semaphore는 거치지 않아요. 대신 배치를 하나씩 순서대로 보내서 풀에 올라가는 건 한 번에 1개뿐입니다.
 
 정리하면 3은 **이 풀 크기에서 거절이 구조적으로 불가능한 가장 큰 값**이에요. 설정을 잘못 바꾸면 앱이 아예 뜨지 않습니다. 2나 4와 따로 비교 측정하지는 않았습니다. 대신 결과에서 근거를 찾았어요. 10만 건 × 0.11초 ÷ 200 = 55초가 이론값인데 실측이 56초였습니다. 3장으로도 스레드 200개가 거의 쉬지 않았다는 뜻입니다.
@@ -254,6 +210,9 @@ WHERE id IN (...) ORDER BY id FOR UPDATE
 3. 고른 토큰만 `IN_PROGRESS`로 바꾸고 커밋한 뒤, **그 토큰으로만** 메시지를 만들어 보냅니다.
 
 폴링 쪽도 같은 쿼리로 잠근 뒤, 조회했을 때와 상태가 그대로인 행만 처리합니다. 어느 쪽이 먼저 오든 한쪽만 성공해요. `ORDER BY id`는 잠그는 순서를 PK 오름차순 하나로 맞춰 두 경로가 서로 반대 순서로 잠가 데드락이 나는 걸 막습니다.
+
+<img src="/diagrams/63/v5-for-update.svg" alt="행 잠금 선점: 먼저 잠근 쪽만 IN_PROGRESS로 선점하고 다른 쪽은 건너뛴다" loading="lazy" style="width:100%;height:auto;border-radius:8px" />
+
 
 순서도 중요했습니다. v4는 허가 같은 대기 없이 바로 `IN_PROGRESS`로 표시했어요. v5에서 대기가 생긴 뒤에도 표시를 먼저 했다면, 기다리는 동안 그 표시가 오래돼 폴링이 "멈췄다"고 오판했을 겁니다.
 
